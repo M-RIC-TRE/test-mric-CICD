@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       TFAction:
-        description: "Terraform Action- Apply or Destroy"     
+        description: "Terraform Action- apply or destroy"     
         required: true
         default: "apply"
 permissions:
@@ -35,5 +35,5 @@ jobs:
       if: ${{ inputs.TFAction == 'apply'}}  
       run: terraform apply # -input=false -auto-approve plan.tfplan
     - name: Terraform Destroy
-      if: ${{ inputs.TFAction == 'destroy' }} 
+      if: ${{ inputs.TFAction == 'destroy'}} 
       run: terraform destroy -input=false -auto-approve
