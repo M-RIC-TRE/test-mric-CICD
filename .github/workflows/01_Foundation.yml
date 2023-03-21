@@ -15,10 +15,10 @@ jobs:
       tf_vars_file: config-dev.tfvars    ## Terraform TFVARS (Required)
       enable_TFSEC: true                 ## (Optional)  Enable TFSEC IaC scans (Private repo requires GitHub enterprise)
     secrets:
-      arm_client_id: ${{ secrets.ARM_CLIENT_ID }}             ## ARM Client ID 
-      arm_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}     ## ARM Client Secret
-      arm_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }} ## ARM Subscription ID
-      arm_tenant_id: ${{ secrets.ARM_TENANT_ID }}             ## ARM Tenant ID
+      arm_client_id: ${{ secrets.AZURE_CLIENT_ID }}             ## ARM Client ID 
+      arm_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}     ## ARM Client Secret
+      arm_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }} ## ARM Subscription ID
+      arm_tenant_id: ${{ secrets.AZURE_TENANT_ID }}             ## ARM Tenant ID
 
   Deploy_Dev:
     needs: Plan_Dev
@@ -32,10 +32,10 @@ jobs:
       tf_key: tfcontaindev.tfstate                 ## AZ backend - Specifies name of the terraform state file and workflow artifact to download (Required)
       gh_environment: dev        ## GH Environment. Default=null - (Optional)
     secrets:
-      arm_client_id: ${{ secrets.ARM_CLIENT_ID }}             ## ARM Client ID 
-      arm_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}     ## ARM Client Secret
-      arm_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }} ## ARM Subscription ID
-      arm_tenant_id: ${{ secrets.ARM_TENANT_ID }}             ## ARM Tenant ID
+      arm_client_id: ${{ secrets.AZURE_CLIENT_ID }}             ## ARM Client ID 
+      arm_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}     ## ARM Client Secret
+      arm_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }} ## ARM Subscription ID
+      arm_tenant_id: ${{ secrets.AZURE_TENANT_ID }}             ## ARM Tenant ID
       
 #       Plan_Prod:
 #     uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@master
