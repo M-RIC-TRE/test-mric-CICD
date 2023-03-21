@@ -25,17 +25,28 @@ jobs:
       run:
         shell: bash
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-    - name: Terraform Init
-      run: terraform init 
-    - name: Terraform Plan
-      run: terraform plan   -out=plan.tfplan -input=false 
-    - name: Terraform Apply
-      if: ${{ inputs.TFAction == 'apply'}}  
-      run: terraform apply  -input=false -auto-approve plan.tfplan
-    - name: Terraform Destroy
-      if: ${{ inputs.TFAction == 'destroy'}} 
-      run: terraform destroy -input=false -auto-approve
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        enable-AzPSSession: true
+    - name: Create Resource Group
+      id: create_resource_group
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az group create --name "rg-terraform-state2" --location "uksouth"
+    # - name: Checkout
+    #   uses: actions/checkout@v3
+    # - name: Setup Terraform
+    #   uses: hashicorp/setup-terraform@v1
+    # - name: Terraform Init
+    #   run: terraform init 
+    # - name: Terraform Plan
+    #   run: terraform plan   -out=plan.tfplan -input=false 
+    # - name: Terraform Apply
+    #   if: ${{ inputs.TFAction == 'apply'}}  
+    #   run: terraform apply  -input=false -auto-approve plan.tfplan
+    # - name: Terraform Destroy
+    #   if: ${{ inputs.TFAction == 'destroy'}} 
+    #   run: terraform destroy -input=false -auto-approve
