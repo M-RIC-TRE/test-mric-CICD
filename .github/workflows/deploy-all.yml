@@ -6,20 +6,16 @@ on:
     inputs:
       TFAction:
         description: "Terraform Action- apply or destroy"     
-        required: true
-        default: "apply"
-permissions:
-  contents: read
-  
   
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Log in to Azure
+      - name: Log in with Azure
         uses: azure/login@v1
         with:
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          enable-AzPSSession: true
       - name: Create Resource Group
         id: create_resource_group
         uses: azure/CLI@v1
