@@ -21,12 +21,12 @@ provider "azurerm" {
 
 #Create Resource Group
 resource "azurerm_resource_group" "rgfirst" {
-  name     = env.RESOURCE_GROUP_NAME
+  name     = var.RESOURCE_GROUP_NAME
   location = var.location
 }
 
 resource "azurerm_sql_server" "sqlserver" {
-  name                         = env.SQL_SERVER_NAME
+  name                         = var.SQL_SERVER_NAME
   resource_group_name          = azurerm_resource_group.rgfirst.name
   location                     = azurerm_resource_group.rgfirst.location
   version                      = "12.0"
@@ -35,7 +35,7 @@ resource "azurerm_sql_server" "sqlserver" {
 }
 
 resource "azurerm_sql_database" "sqldb" {
-  name                             = env.SQL_DB_NAME
+  name                             = var.SQL_DB_NAME
   resource_group_name              = azurerm_resource_group.rgfirst.name
   location                         = azurerm_resource_group.rgfirst.location
   server_name                      = azurerm_sql_server.sqlserver.name
