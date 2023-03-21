@@ -21,6 +21,6 @@ provider "azurerm" {
 
 #Create Resource Group
 resource "azurerm_resource_group" "rgfirst" {
-  name     = "rg-mrci-dev-001"  # var.resource group -- will be environment variable
+  name     = "rg-mric-tf-001"  # var.resource_group -- will be environment variable
   location = var.location
 }
