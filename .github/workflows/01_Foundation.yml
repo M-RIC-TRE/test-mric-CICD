@@ -11,7 +11,7 @@ jobs:
       az_resource_group: rg-mgmt-terraform     ## AZ backend - AZURE Resource Group hosting terraform backend storage acc (Required)
       az_storage_acc: stmgmttfdev001    ## AZ backend - AZURE terraform backend storage acc (Required)
       az_container_name: tfcontain ## AZ backend - AZURE storage container hosting state files (Required)
-      tf_key: tfcontaindev.tfstate                ## AZ backend - Specifies name that will be given to terraform state file and plan artifact (Required)
+      tf_key: tfcontaindev                ## AZ backend - Specifies name that will be given to terraform state file and plan artifact (Required)
       tf_vars_file: config-dev.tfvars    ## Terraform TFVARS (Required)
       enable_TFSEC: true                 ## (Optional)  Enable TFSEC IaC scans (Private repo requires GitHub enterprise)
     secrets:
