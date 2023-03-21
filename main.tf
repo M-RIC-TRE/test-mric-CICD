@@ -11,7 +11,7 @@ terraform {
     resource_group_name  = "rg-mgmt-terraform"
     storage_account_name = "stmgmttfdev001"
     container_name       = "tfcontain"
-    key                  = "tfcontain.tfstate"
+   #  key                  = "tfcontain.tfstate"
   }
 }
 
