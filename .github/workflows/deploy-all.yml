@@ -1,53 +1,10 @@
 ### NOT A PART OF NEW DEVELOPMENT ###
 
-name: 'Deploy-new-terraform'
+name: 'Deploy-sp-test'
 on:
-  workflow_dispatch:
-    inputs:
-      TFAction:
-        description: "Terraform Action- apply or destroy"     
-  
+  push:
+    branches:
+      - "sp"
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Log in with Azure
-        uses: azure/login@v1
-        with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
-          enable-AzPSSession: true
-      - name: Create Resource Group
-        id: create_resource_group
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az group create --name "rg-terraform-state2" --location "uksouth"
-  
-#   terraform:
-#     name: 'Terraform'
-#     runs-on: ubuntu-latest
-#     environment: dev
-#     env:
-#       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-#       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-#       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-#       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}           
-      
-#     defaults:
-#       run:
-#         shell: bash
-#     steps:
-    # - name: Checkout
-    #   uses: actions/checkout@v3
-    # - name: Setup Terraform
-    #   uses: hashicorp/setup-terraform@v1
-    # - name: Terraform Init
-    #   run: terraform init 
-    # - name: Terraform Plan
-    #   run: terraform plan   -out=plan.tfplan -input=false 
-    # - name: Terraform Apply
-    #   if: ${{ inputs.TFAction == 'apply'}}  
-    #   run: terraform apply  -input=false -auto-approve plan.tfplan
-    # - name: Terraform Destroy
-    #   if: ${{ inputs.TFAction == 'destroy'}} 
-    #   run: terraform destroy -input=false -auto-approve
+  deploy-from_main:
+    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/deploy_all.yml@sp
