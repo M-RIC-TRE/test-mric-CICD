@@ -92,6 +92,9 @@ jobs:
         id: validate
         run: terraform validate
 
+      - name: check string
+        run: echo $TF_VARS
+
       - name: Terraform Plan
         id: plan
         run: terraform plan --var-file=$TF_VARS --out=plan.tfplan
