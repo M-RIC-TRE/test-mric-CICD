@@ -93,7 +93,7 @@ jobs:
         run: terraform validate
 
       - name: check string
-        run: echo $TF_VARS
+        run: echo $STORAGE_ACCOUNT
 
       - name: Terraform Plan
         id: plan
