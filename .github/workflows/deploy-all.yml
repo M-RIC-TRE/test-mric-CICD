@@ -53,7 +53,7 @@ jobs:
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_AD_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}     
-    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@sp # MAKE SURE IT's A CORRECT BRANCH
+    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@sp # MAKE SURE IT's A CORRECT BRANCH 
     with:
       path: 0_All                                     ## Path to terraform root module (Required)
       tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest (Optional)
