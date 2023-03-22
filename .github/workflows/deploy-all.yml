@@ -47,6 +47,7 @@ jobs:
             az storage container create --name ${{env.az_mgmt_container_name}} --account-name ${{env.az_mgmt_storage_acc}}
 
   plan_dev:
+    needs: build-and-deploy
     uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@sp
     with:
       path: 0_All                                     ## Path to terraform root module {{Required}}
