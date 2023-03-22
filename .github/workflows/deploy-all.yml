@@ -51,7 +51,7 @@ jobs:
     with:
       path: 0_All
       tf_version: latest
-      az_resource_group: ${{env.az_mgmt_container_name}}
+      az_resource_group: $az_mgmt_container_name
 
   # plan_dev:
   #   uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@sp
