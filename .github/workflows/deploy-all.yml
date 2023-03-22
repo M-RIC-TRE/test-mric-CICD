@@ -36,8 +36,8 @@ jobs:
         id: create_storage_account
         uses: azure/CLI@v1
         with:
-          inlineScript: |
-            az storage account create --name ${{env.az_mgmt_storage_acc}} --resource_group ${{env.az_mgmt_resource_group}} --location ${{env.location}} --sku Standard_LRS --encryption-services blob
+            inlineScript: |
+              az storage account create --name ${{env.az_mgmt_storage_acc}} --g ${{env.az_mgmt_resource_group}} --location ${{env.location}} --sku Standard_LRS --encryption-services blob
             
       - name: Create Storage Container
         id: create_storage_container
