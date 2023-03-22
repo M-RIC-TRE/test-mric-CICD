@@ -23,7 +23,7 @@ jobs:
           creds: "${{ secrets.AZURE_CREDENTIALS }}"
           enable-AzPSSession: true
       - name: check string
-        run: echo ${{ env.MY_VARIABLE }}
+        run: echo ${{ env.tf_vars_file }}
 
 #       - name: Create Resource Group
 #         id: create_resource_group
