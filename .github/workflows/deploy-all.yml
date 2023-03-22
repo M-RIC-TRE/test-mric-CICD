@@ -3,50 +3,92 @@
 name: 'Deploy-new-terraform'
 on:
   workflow_dispatch:
-    inputs:
-      TFAction:
-        description: "Terraform Action- apply or destroy"     
-        required: true
-        default: "apply"
-permissions:
-  contents: read
+  push:
+    branches:
+      -"sp"
+
+variables:
+  env ='${{ secrets.ENVIRONMENT }}'               # Environemnt to deploy in
+  az_mgmt_resource_group = "rg-terraform-state01"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
+  az_mgmt_storage_acc = "stamrictfstates"         # AZ backend - AZURE terraform backend storage acc
+  az_mgmt_container_name = "tfstate"              # AZ backend - AZURE storage container hosting state files
+  tf_key = "tfstate" + $(env)
+  tf_vars_file = "config-"+ $(env)
+  location = "uksouth"                            # Location for all resources
+  
 jobs:
-  terraform:
-    name: 'Terraform'
+  build-and-deploy:
     runs-on: ubuntu-latest
-    environment: dev
-    env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}           
-      
-    defaults:
-      run:
-        shell: bash
     steps:
-    - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        creds: '${{ secrets.AZURE_CREDENTIALS }}'
-        enable-AzPSSession: true
-    - name: Create Resource Group
-      id: create_resource_group
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          az group create --name "rg-terraform-state2" --location "uksouth"
-    # - name: Checkout
-    #   uses: actions/checkout@v3
-    # - name: Setup Terraform
-    #   uses: hashicorp/setup-terraform@v1
-    # - name: Terraform Init
-    #   run: terraform init 
-    # - name: Terraform Plan
-    #   run: terraform plan   -out=plan.tfplan -input=false 
-    # - name: Terraform Apply
-    #   if: ${{ inputs.TFAction == 'apply'}}  
-    #   run: terraform apply  -input=false -auto-approve plan.tfplan
-    # - name: Terraform Destroy
-    #   if: ${{ inputs.TFAction == 'destroy'}} 
-    #   run: terraform destroy -input=false -auto-approve
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          enable-AzPSSession: true
+  
+      - name: Create Resource Group
+        id: create_resource_group
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group create --name $(az_mgmt_resource_group) --location $(location)
+  
+      - name: Create Storage Account
+        id: create_storage_account
+        uses: azure/CLI@v1
+        with:
+            inlineScript: |
+            az storage account create --name $(az_mgmt_storage_acc) --resource_group $(az_mgmt_resource_group) --location $(location) --sku "Standard_LRS" --encryption-services blob
+            
+      - name: Create Storage Container
+        id: create_storage_container
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az storage container create --name $(az_mgmt_container_name) --account-name $(az_mgmt_storage_acc)
+
+  plan_dev:
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_AD_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}     
+    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@main
+    with:
+      path: 0_All                                     ## Path to terraform root module (Required)
+      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest (Optional)
+      az_resource_group: $(az_mgmt_resource_group)    ## AZ backend - AZURE Resource Group hosting terraform backend storage acc (Required)
+      az_storage_acc: $(az_mgmt_storage_acc)          ## AZ backend - AZURE terraform backend storage acc (Required)
+      az_container_name: $(az_mgmt_container_name)    ## AZ backend - AZURE storage container hosting state files (Required)
+      tf_key: $(tf_key)                               ## AZ backend - Specifies name that will be given to terraform state file and plan artifact (Required)
+      tf_vars_file: $(tf_vars_file)                   ## Terraform TFVARS (Required)
+    secrets:
+      arm_client_id: ${{ secrets.ARM_CLIENT_ID }}             ## ARM Client ID 
+      arm_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}     ## ARM Client Secret
+      arm_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }} ## ARM Subscription ID
+      arm_tenant_id: ${{ secrets.ARM_TENANT_ID }}             ## ARM Tenant ID
+
+
+  # deploy_dev:
+      # env:
+      # ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+      # ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+      # ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_AD_SUBSCRIPTION_ID }}
+      # ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}  
+  #   needs: plan_dev
+  #   uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_apply.yml@master
+  #   with:
+  #     path: 0_All                ## Path to terraform root module (Required)
+  #     tf_version: latest                 ## Terraform version e.g: 1.1.0 Default=latest (Optional)
+  #     az_resource_group: $(az_mgmt_resource_group)      ## AZ backend - AZURE Resource Group hosting terraform backend storage acc (Required)
+  #     az_storage_acc: $(az_mgmt_storage_acc)    ## AZ backend - AZURE terraform backend storage acc (Required)
+  #     az_container_name: $(az_mgmt_container_name) ## AZ backend - AZURE storage container hosting state files (Required)
+  #     tf_key: $(tf_key)             ## AZ backend - Specifies name of the terraform state file and workflow artifact to download (Required)
+  #     gh_environment: $(env)        ## GH Environment. Default=null - (Optional)
+  #   # secrets:
+  #   #   arm_client_id: ${{ secrets.ARM_CLIENT_ID }}             ## ARM Client ID 
+  #   #   arm_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}     ## ARM Client Secret
+  #   #   arm_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }} ## ARM Subscription ID
+  #   #   arm_tenant_id: ${{ secrets.ARM_TENANT_ID }}             ## ARM Tenant ID
+
+
