@@ -12,7 +12,7 @@ variables:
   az_mgmt_container_name = "tfstate"              # AZ backend - AZURE storage container hosting state files
   tf_key = "tfstate" + $(env)
   tf_vars_file = "config-"+ $(env)
-  location = "uksouth"                            # Location for all resources
+  location = "uksouth"                            # Location for all resources 
   
 jobs:
   build-and-deploy:
