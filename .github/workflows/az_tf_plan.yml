@@ -57,7 +57,7 @@ jobs:
     env:
       STORAGE_ACCOUNT: ${{ inputs.az_storage_acc }}
       CONTAINER_NAME: ${{ inputs.az_container_name }}
-      RESOURCE_GROUP: ${{ inputs.az_resource_group }}
+      RESOURCE_GROUP: ${{ vars.RESOURCE_GROUP }}
       TF_KEY: ${{ inputs.tf_key }}
       TF_VARS: ${{ inputs.tf_vars_file }}
       ###AZURE Client details###
@@ -71,7 +71,7 @@ jobs:
         uses: actions/checkout@v3.3.0
 
       - name: check string
-        run: echo " rg ${{ vars.RESOURCE_GROUP }}" 
+        run: echo " rg $RESOURCE_GROUP" 
 
 
       # - name: Setup Terraform
