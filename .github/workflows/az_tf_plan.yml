@@ -50,7 +50,6 @@ on:
 jobs:
   build-plan:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.gh_environment }}
     defaults:
       run:
         shell: bash
@@ -59,13 +58,13 @@ jobs:
       STORAGE_ACCOUNT: ${{ inputs.az_storage_acc }}
       CONTAINER_NAME: ${{ inputs.az_container_name }}
       RESOURCE_GROUP: ${{ inputs.az_resource_group }}
-      TF_KEY: ${{ inputs.tf_key }}.tfstate
+      TF_KEY: ${{ inputs.tf_key }}
       TF_VARS: ${{ inputs.tf_vars_file }}
       ###AZURE Client details###
-      ARM_CLIENT_ID: ${{ secrets.arm_client_id }}
-      ARM_CLIENT_SECRET: ${{ secrets.arm_client_secret }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.arm_subscription_id }}
-      ARM_TENANT_ID: ${{ secrets.arm_tenant_id }}
+      # ARM_CLIENT_ID: ${{ secrets.arm_client_id }}
+      # ARM_CLIENT_SECRET: ${{ secrets.arm_client_secret }}
+      # ARM_SUBSCRIPTION_ID: ${{ secrets.arm_subscription_id }}
+      # ARM_TENANT_ID: ${{ secrets.arm_tenant_id }}
   
     steps:
       - name: Checkout
