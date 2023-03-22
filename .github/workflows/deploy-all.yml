@@ -4,17 +4,17 @@ on:
   push:
     branches:
       -sp
-  
-jobs:
-  variables:
-    env:  ${{ secrets.ENVIRONMENT }}                 # Environemnt to deploy in
-    az_mgmt_resource_group: "rg-terraform-state01"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
-    az_mgmt_storage_acc: "stamrictfstates"         # AZ backend - AZURE terraform backend storage acc
-    az_mgmt_container_name: "tfstate"              # AZ backend - AZURE storage container hosting state files
-    tf_key: "tfstate" + $(env)
-    tf_vars_file: "config-" + $(env)
-    location: "uksouth"                            # Location for all resources 
 
+variables:
+  env:  ${{ secrets.ENVIRONMENT }}                 # Environemnt to deploy in
+  az_mgmt_resource_group: "rg-terraform-state01"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
+  az_mgmt_storage_acc: "stamrictfstates"         # AZ backend - AZURE terraform backend storage acc
+  az_mgmt_container_name: "tfstate"              # AZ backend - AZURE storage container hosting state files
+  tf_key: "tfstate" + $(env)
+  tf_vars_file: "config-" + $(env)
+  location: "uksouth"                            # Location for all resources 
+
+jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
