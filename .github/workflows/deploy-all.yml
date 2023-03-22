@@ -25,12 +25,12 @@ jobs:
       - name: check string
         run: echo ${{ env.tf_vars_file }}
 
-#       - name: Create Resource Group
-#         id: create_resource_group
-#         uses: azure/CLI@v1
-#         with:
-#           inlineScript: |
-#             az group create --name $(az_mgmt_resource_group) --location $(location)
+      - name: Create Resource Group
+        id: create_resource_group
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group create --name $(az_mgmt_resource_group) --location $(location)
   
 #       - name: Create Storage Account
 #         id: create_storage_account
