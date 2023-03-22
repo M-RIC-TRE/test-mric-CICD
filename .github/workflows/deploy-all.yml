@@ -52,10 +52,10 @@ jobs:
     with:
       path: 0_All                                     ## Path to terraform root module {{Required}}
       tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
-      # az_resource_group: $az_mgmt_resource_group    ## AZ backend - AZURE Resource Group hosting terraform backend storage acc {{Required}}
+      az_resource_group: ${az_mgmt_resource_group}    ## AZ backend - AZURE Resource Group hosting terraform backend storage acc {{Required}}
       az_storage_acc: ${az_mgmt_storage_acc}        ## AZ backend - AZURE terraform backend storage acc {{Required}}
-      # az_container_name: $az_mgmt_container_name    ## AZ backend - AZURE storage container hosting state files {{Required}}
-      # tf_key: $tf_key                               ## AZ backend - Specifies name that will be given to terraform state file and plan artifact {{Required}}
+      az_container_name: ${az_mgmt_container_name}    ## AZ backend - AZURE storage container hosting state files {{Required}}
+      tf_key: ${tf_key}                               ## AZ backend - Specifies name that will be given to terraform state file and plan artifact {{Required}}
       tf_vars_file: ${tf_vars_file}                   ## Terraform TFVARS {{Required}}
     secrets:
       arm_client_id: ${{ secrets.AZURE_AD_CLIENT_ID }}            ## ARM Client ID 
