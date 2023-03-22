@@ -1,5 +1,3 @@
-### NOT A PART OF NEW DEVELOPMENT ###
-
 name: 'Deploy-new-terraform'
 on:
   workflow_dispatch:
