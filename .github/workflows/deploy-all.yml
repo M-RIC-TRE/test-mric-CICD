@@ -11,7 +11,7 @@ env:
   az_mgmt_container_name: "tfstate"                # AZ backend - AZURE storage container hosting state files
   location: "uksouth"                                     # Location for all resources 
   tf_key: "terraform.state"
-  tf_vars_file: "config-${{ secrets.ENVIRONMENT }}"
+  tf_vars_file: "config-${{ secrets.ENVIRONMENT }}.tfvars"
 
 jobs:
   build-and-deploy:
