@@ -13,15 +13,15 @@ env:
 #   tf_vars_file: "config-" + $(env)
 #   location: "uksouth"                              # Location for all resources 
 
-# jobs:
-#   build-and-deploy:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Log in with Azure
-#         uses: azure/login@v1
-#         with:
-#           creds: '${{ secrets.AZURE_CREDENTIALS }}'
-#           enable-AzPSSession: true
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          enable-AzPSSession: true
   
 #       - name: Create Resource Group
 #         id: create_resource_group
