@@ -5,13 +5,13 @@ on:
     branches:
       - sp
 env:
-  environment: ${{ secrets.ENVIRONMENT }}          # Environemnt to deploy in
-  az_mgmt_resource_group: "rg-terraform-state01"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
-  az_mgmt_storage_acc: "stamrictfstates"           # AZ backend - AZURE terraform backend storage acc
-  az_mgmt_container_name: "tfstate"                # AZ backend - AZURE storage container hosting state files
-  tf_key: "tfstate" + $(env)
-  tf_vars_file: "config-" + $(env)
-  location: "uksouth"                              # Location for all resources 
+  environment: ${{ secrets.ENVIRONMENT }}                 # Environemnt to deploy in
+#   az_mgmt_resource_group: "rg-terraform-state01"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
+#   az_mgmt_storage_acc: "stamrictfstates"           # AZ backend - AZURE terraform backend storage acc
+#   az_mgmt_container_name: "tfstate"                # AZ backend - AZURE storage container hosting state files
+#   tf_key: "tfstate" + $(env)
+#   tf_vars_file: "config-" + $(env)
+#   location: "uksouth"                              # Location for all resources 
 
 jobs:
   build-and-deploy:
@@ -23,12 +23,12 @@ jobs:
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
           enable-AzPSSession: true
   
-      - name: Create Resource Group
-        id: create_resource_group
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az group create --name $(az_mgmt_resource_group) --location $(location)
+#       - name: Create Resource Group
+#         id: create_resource_group
+#         uses: azure/CLI@v1
+#         with:
+#           inlineScript: |
+#             az group create --name $(az_mgmt_resource_group) --location $(location)
   
 #       - name: Create Storage Account
 #         id: create_storage_account
