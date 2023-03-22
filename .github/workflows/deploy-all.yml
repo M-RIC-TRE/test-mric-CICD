@@ -10,8 +10,8 @@ env:
   az_mgmt_storage_acc: "stamrictfstates"           # AZ backend - AZURE terraform backend storage acc
   az_mgmt_container_name: "tfstate"                # AZ backend - AZURE storage container hosting state files
   location: "uksouth"                                     # Location for all resources 
-  tf_key: "tfstate" + ${{ secrets.ENVIRONMENT }}  
-  tf_vars_file: "config-" + ${{ secrets.ENVIRONMENT }}  
+  tf_key: "tfstate"
+  tf_vars_file: "config-${{ secrets.ENVIRONMENT }}"
 
 jobs:
   build-and-deploy:
@@ -22,7 +22,9 @@ jobs:
         with:
           creds: "${{ secrets.AZURE_CREDENTIALS }}"
           enable-AzPSSession: true
-  
+      - name: check string
+        run: echo $(tf_vars_file)
+
 #       - name: Create Resource Group
 #         id: create_resource_group
 #         uses: azure/CLI@v1
