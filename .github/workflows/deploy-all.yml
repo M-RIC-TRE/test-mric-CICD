@@ -9,9 +9,9 @@ env:
   az_mgmt_resource_group: "rg-terraform-state01"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
   az_mgmt_storage_acc: "stamrictfstates"           # AZ backend - AZURE terraform backend storage acc
   az_mgmt_container_name: "tfstate"                # AZ backend - AZURE storage container hosting state files
-  tf_key: "tfstate" + ${{ secrets.ENVIRONMENT }}  
-  tf_vars_file: "config-" + ${{ secrets.ENVIRONMENT }}  
-  location: "uksouth"                              # Location for all resources 
+  location: "uksouth"                                     # Location for all resources 
+  # tf_key: "tfstate" + ${{ secrets.ENVIRONMENT }}  
+  # tf_vars_file: "config-" + ${{ secrets.ENVIRONMENT }}  
 
 jobs:
   build-and-deploy:
@@ -20,7 +20,7 @@ jobs:
       - name: Log in with Azure
         uses: azure/login@v1
         with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
           enable-AzPSSession: true
   
 #       - name: Create Resource Group
