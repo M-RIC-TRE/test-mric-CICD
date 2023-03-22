@@ -22,7 +22,7 @@ jobs:
         with:
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
           enable-AzPSSession: true
-  
+          
       - name: Create Resource Group
         id: create_resource_group
         uses: azure/CLI@v1
@@ -44,26 +44,26 @@ jobs:
           inlineScript: |
             az storage container create --name $(az_mgmt_container_name) --account-name $(az_mgmt_storage_acc)
 
-  terraform-plan:
-    env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_AD_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}     
-    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@sp # MAKE SURE IT's A CORRECT BRANCH 
-    with:
-      path: 0_All                                             ## Path to terraform root module (Required)
-      tf_version: latest                                      ## Terraform version e.g: 1.1.0 Default=latest (Optional)
-      az_resource_group: $(az_mgmt_resource_group)            ## AZ backend - AZURE Resource Group hosting terraform backend storage acc (Required)
-      az_storage_acc: $(az_mgmt_storage_acc)                  ## AZ backend - AZURE terraform backend storage acc (Required)
-      az_container_name: $(az_mgmt_container_name)            ## AZ backend - AZURE storage container hosting state files (Required)
-      tf_key: $(tf_key)                                       ## AZ backend - Specifies name that will be given to terraform state file and plan artifact (Required)
-      tf_vars_file: $(tf_vars_file)                           ## Terraform TFVARS (Required)
-    secrets:
-      arm_client_id: ${{ secrets.ARM_CLIENT_ID }}             ## ARM Client ID 
-      arm_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}     ## ARM Client Secret
-      arm_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }} ## ARM Subscription ID
-      arm_tenant_id: ${{ secrets.ARM_TENANT_ID }}             ## ARM Tenant ID
+  # terraform-plan:
+  #   env:
+  #     ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+  #     ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+  #     ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_AD_SUBSCRIPTION_ID }}
+  #     ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}     
+  #   uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@sp # MAKE SURE IT's A CORRECT BRANCH 
+  #   with:
+  #     path: 0_All                                             ## Path to terraform root module (Required)
+  #     tf_version: latest                                      ## Terraform version e.g: 1.1.0 Default=latest (Optional)
+  #     az_resource_group: $(az_mgmt_resource_group)            ## AZ backend - AZURE Resource Group hosting terraform backend storage acc (Required)
+  #     az_storage_acc: $(az_mgmt_storage_acc)                  ## AZ backend - AZURE terraform backend storage acc (Required)
+  #     az_container_name: $(az_mgmt_container_name)            ## AZ backend - AZURE storage container hosting state files (Required)
+  #     tf_key: $(tf_key)                                       ## AZ backend - Specifies name that will be given to terraform state file and plan artifact (Required)
+  #     tf_vars_file: $(tf_vars_file)                           ## Terraform TFVARS (Required)
+  #   secrets:
+  #     arm_client_id: ${{ secrets.ARM_CLIENT_ID }}             ## ARM Client ID 
+  #     arm_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}     ## ARM Client Secret
+  #     arm_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }} ## ARM Subscription ID
+  #     arm_tenant_id: ${{ secrets.ARM_TENANT_ID }}             ## ARM Tenant ID
 
 
 #   # deploy:
