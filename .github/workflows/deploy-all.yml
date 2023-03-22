@@ -46,15 +46,15 @@ jobs:
       #     inlineScript: |
       #       az storage container create --name ${{env.az_mgmt_container_name}} --account-name ${{env.az_mgmt_storage_acc}}
 
-  plan_dev:
+  plan_dev:              
     needs: build-and-deploy
     uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@sp
     with:
       path: 0_All                                     ## Path to terraform root module {{Required}}
       tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
-      az_resource_group: $location    ## AZ backend - AZURE Resource Group hosting terraform backend storage acc {{Required}}
-      az_storage_acc: $location        ## AZ backend - AZURE terraform backend storage acc {{Required}}
-      az_container_name: $location    ## AZ backend - AZURE storage container hosting state files {{Required}}
+      az_resource_group: ${{ inputs.location }}    ## AZ backend - AZURE Resource Group hosting terraform backend storage acc {{Required}}
+      az_storage_acc: ${{ inputs.location }}         ## AZ backend - AZURE terraform backend storage acc {{Required}}
+      az_container_name: ${{ inputs.location }}     ## AZ backend - AZURE storage container hosting state files {{Required}}
       tf_key: ${tf_key}                               ## AZ backend - Specifies name that will be given to terraform state file and plan artifact {{Required}}
       tf_vars_file: ${tf_vars_file}                   ## Terraform TFVARS {{Required}}
     secrets:
