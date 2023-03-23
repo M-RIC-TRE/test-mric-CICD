@@ -47,6 +47,9 @@ on:
         description: 'Specifies the Azure ARM TENANT ID.'
         required: true
 
+env:
+  RESOURCE_GROUP: ${{ vars.RESOURCE_GROUP }}
+
 jobs:
   build-plan:
     runs-on: ubuntu-latest
@@ -71,7 +74,7 @@ jobs:
         uses: actions/checkout@v3.3.0
 
       - name: check string
-        run: echo  $env:RESOURCE_GROUP #" rg ${{ env.RESOURCE_GROUP }}" 
+        run: echo " rg ${{ env.RESOURCE_GROUP }}" 
 
 
       # - name: Setup Terraform
