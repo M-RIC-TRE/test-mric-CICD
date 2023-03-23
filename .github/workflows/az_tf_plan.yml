@@ -33,7 +33,10 @@ on:
 #         required: true
 #         type: string
 
-#     secrets:
+    secrets:
+      AZURE_CREDENTIALS:
+        required: true
+      
 #       arm_client_id:
 #         description: 'Specifies the Azure ARM CLIENT ID.'
 #         required: true
