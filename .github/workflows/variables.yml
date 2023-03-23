@@ -6,7 +6,9 @@ on:
       az_mgmt_resource_group:
         description: " AZ backend - AZURE Resource Group hosting terraform backend storage acc"
         value: ${{ jobs.generate_variables.outputs.output1 }}
-
+      test_output:
+        description: "test output"
+        value: ${{ env.az_mgmt_resource_group }}
 env:
   az_mgmt_resource_group: "rg-terraform-state"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
 
