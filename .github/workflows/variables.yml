@@ -2,19 +2,21 @@ name: Reusable variables
 
 on:
   workflow_call:
+    outputs:
+      az_mgmt_resource_group:
+        description: " AZ backend - AZURE Resource Group hosting terraform backend storage acc"
+        value: ${{ jobs.generate_variables.outputs.output1 }}
 
 env:
   az_mgmt_resource_group: "rg-terraform-state"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
-  az_mgmt_storage_acc: "stamrictfstates"         # AZ backend - AZURE terraform backend storage acc
-  az_mgmt_container_name: "tfstate"              # AZ backend - AZURE storage container hosting state files
-  location: "uksouth"                            # Location for all resources 
-  tf_key: "terraform.state"
-  tf_vars_file: "config_"
-  
+
 jobs:
-  generat_variables:
-    name: Generate Variables
+  generate_variables:
+    name: Generate output
     runs-on: ubuntu-latest
     # Map the job outputs to step outputs
     outputs:
-      az_mgmt_resource_group: ${{ env.az_mgmt_resource_group }}
+      output1: ${{ steps.step1.outputs.firstword }}
+    steps:
+      - id: step1
+        run: echo "firstword=$ {{ env.az_mgmt_resource_group }}" >> $GITHUB_OUTPUT
