@@ -16,6 +16,13 @@ jobs:
         with:
           creds: "${{ secrets.AZURE_CREDENTIALS }}"
           enable-AzPSSession: true
+  plan_dev:              
+    #needs: build-and-deploy
+    uses: ./.github/workflows/az_tf_plan.yml
+    with:
+      path: 0_All                                     ## Path to terraform root module {{Required}}
+      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
+      secrets: inherit
 # ALREADY WORKS
 #####################################################################################################################
 #       - name: Create Resource Group
