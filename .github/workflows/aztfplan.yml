@@ -49,7 +49,7 @@ on:
 
 jobs:
   variables:
-    uses: .github/workflows/variables.yml@sp
+    uses: ./.github/workflows/variables.yml
   build-plan:
     runs-on: ubuntu-latest
     needs: variables
