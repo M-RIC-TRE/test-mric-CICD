@@ -51,6 +51,8 @@ env:
   RESOURCE_GROUP: ${{ vars.RESOURCE_GROUP_NAME }}
 
 jobs:
+  vars:
+    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/variables.yml@sp
   build-plan:
     runs-on: ubuntu-latest
     defaults:
@@ -74,6 +76,8 @@ jobs:
 
       - name: check string
         run: echo " rg ${{ env.RESOURCE_GROUP}}" 
+      - name: check common variables
+        run: echo " rg ${{ vars.outputs.az_mgmt_resource_group }}" 
 
 
       # - name: Setup Terraform
