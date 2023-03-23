@@ -79,7 +79,7 @@ jobs:
         run: echo "Common resource group ${{ needs.varss.outputs.az_mgmt_resource_group }}"
 
       - name: string test
-        run: echo ${{ format('{0}dev.tfvars', $${{ needs.variables.outputs.tf_vars_file }}}}
+        run: echo ${{ format('{0}dev.tfvars', $${{ needs.variables.outputs.tf_vars_file }}) }}
 
 #       - name: Setup Terraform
 #         uses: hashicorp/setup-terraform@v2.0.3
