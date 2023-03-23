@@ -42,12 +42,12 @@ jobs:
 #####################################################################################################################
 
 
-#   plan_dev:              
-#     needs: build-and-deploy
-#     uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan_sp.yml@sp
-#     with:
-#       path: 0_All                                     ## Path to terraform root module {{Required}}
-#       tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
+  plan_dev:              
+    needs: build-and-deploy
+    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan_sp.yml@sp
+    with:
+      path: 0_All                                     ## Path to terraform root module {{Required}}
+      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
 #       secrets: inherit
 #       az_resource_group: uksouth      ## AZ backend - AZURE Resource Group hosting terraform backend storage acc {{Required}}
 #       az_storage_acc: uksouth        ## AZ backend - AZURE terraform backend storage acc {{Required}}
