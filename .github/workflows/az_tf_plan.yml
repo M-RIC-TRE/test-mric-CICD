@@ -12,50 +12,50 @@ on:
         required: false
         type: string
         default: latest
-      az_resource_group:
-        description: 'Specifies the Azure Resource Group where the backend storage account is hosted.'
-        required: true
-        type: string
-      az_storage_acc:
-        description: 'Specifies the Azure Storage Account where the backend state is hosted.'
-        required: true
-        type: string
-      az_container_name:
-        description: 'Specifies the Azure Storage account container where backend Terraform state is hosted.'
-        required: true
-        type: string
-      tf_key:
-        description: 'Specifies the Terraform state file name for this plan. Workflow artifact will use same name'
-        required: true
-        type: string
-      tf_vars_file:
-        description: 'Specifies the Terraform TFVARS file.'
-        required: true
-        type: string
+#       az_resource_group:
+#         description: 'Specifies the Azure Resource Group where the backend storage account is hosted.'
+#         required: true
+#         type: string
+#       az_storage_acc:
+#         description: 'Specifies the Azure Storage Account where the backend state is hosted.'
+#         required: true
+#         type: string
+#       az_container_name:
+#         description: 'Specifies the Azure Storage account container where backend Terraform state is hosted.'
+#         required: true
+#         type: string
+#       tf_key:
+#         description: 'Specifies the Terraform state file name for this plan. Workflow artifact will use same name'
+#         required: true
+#         type: string
+#       tf_vars_file:
+#         description: 'Specifies the Terraform TFVARS file.'
+#         required: true
+#         type: string
 
-    secrets:
-      arm_client_id:
-        description: 'Specifies the Azure ARM CLIENT ID.'
-        required: true
-      arm_client_secret:
-        description: 'Specifies the Azure ARM CLIENT SECRET.'
-        required: true
-      arm_subscription_id:
-        description: 'Specifies the Azure ARM SUBSCRIPTION ID.'
-        required: true
-      arm_tenant_id:
-        description: 'Specifies the Azure ARM TENANT ID.'
-        required: true
+#     secrets:
+#       arm_client_id:
+#         description: 'Specifies the Azure ARM CLIENT ID.'
+#         required: true
+#       arm_client_secret:
+#         description: 'Specifies the Azure ARM CLIENT SECRET.'
+#         required: true
+#       arm_subscription_id:
+#         description: 'Specifies the Azure ARM SUBSCRIPTION ID.'
+#         required: true
+#       arm_tenant_id:
+#         description: 'Specifies the Azure ARM TENANT ID.'
+#         required: true
 
 env:
   RESOURCE_GROUP: ${{ vars.RESOURCE_GROUP_NAME }}
 
 jobs:
-  varss:
+  variables:
     uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/variables.yml@sp
   build-plan:
     runs-on: ubuntu-latest
-    needs: varss
+    needs: variables
     defaults:
       run:
         shell: bash
@@ -74,40 +74,38 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.3.0
-
-      #- name: check string
-      #  run: echo " rg ${{ env.RESOURCE_GROUP}}" 
+        
       - name: check common variables
         run: echo "Common resource group ${{ needs.varss.outputs.az_mgmt_resource_group }}"
 
 
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v2.0.3
-      #   with:
-      #     terraform_version: ${{ inputs.tf_version }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2.0.3
+        with:
+          terraform_version: ${{ inputs.tf_version }}
 
-      # - name: Terraform Format
-      #   id: fmt
-      #   run: terraform fmt --check
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt --check
 
-      # - name: Terraform Init
-      #   id: init
-      #   run: | 
-      #     terraform init \
-      #     --backend-config="storage_account_name=$STORAGE_ACCOUNT" \
-      #     --backend-config="container_name=$CONTAINER_NAME" \
-      #     --backend-config="resource_group_name=$RESOURCE_GROUP" \
-      #     --backend-config="key=$TF_KEY"
+      - name: Terraform Init
+        id: init
+        run: | 
+          terraform init \
+          --backend-config="storage_account_name=$${{ needs.variables.outputs.az_mgmt_storage_acc }}" \
+          --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
+          --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
+          --backend-config="key=$${{ needs.variables.outputs.tf_key }}"
       
-      # - name: Terraform Validate
-      #   id: validate
-      #   run: terraform validate
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
 
-      # - name: Terraform Plan
-      #   id: plan
-      #   run: terraform plan --var-file=$TF_VARS --out=plan.tfplan
-      #   continue-on-error: true
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan --var-file=$TF_VARS --out=plan.tfplan
+        continue-on-error: true
 
-      # - name: Terraform Plan Status
-      #   if: steps.plan.outcome == 'failure'
-      #   run: exit 1
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
