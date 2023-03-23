@@ -74,11 +74,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.3.0
 
-      - name: check string
-        run: echo " rg ${{ env.RESOURCE_GROUP}}" 
+      #- name: check string
+      #  run: echo " rg ${{ env.RESOURCE_GROUP}}" 
       - name: check common variables
         run: echo " rg ${{ vars.outputs.az_mgmt_resource_group }}" 
-
+      - name: check common variables
+        run: echo " rg ${{ vars.outputs.test_output }}" 
 
       # - name: Setup Terraform
       #   uses: hashicorp/setup-terraform@v2.0.3
