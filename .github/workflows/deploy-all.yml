@@ -4,65 +4,62 @@ on:
   push:
     branches:
       - sp
-# env:
-#   environment: ${{ secrets.ENVIRONMENT }}                 # Environemnt to deploy in
-#   az_mgmt_resource_group: "rg-terraform-state"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
-#   az_mgmt_storage_acc: "stamrictfstates"           # AZ backend - AZURE terraform backend storage acc
-#   az_mgmt_container_name: "tfstate"                # AZ backend - AZURE storage container hosting state files
-#   location: "uksouth"                                     # Location for all resources 
-#   tf_key: "terraform.state"
-#   tf_vars_file: "config_dev.tfvars"
-
 jobs:
-  variables:
-    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/variables.yml@sp
-  build-and-deploy:
-    needs: variables
-    runs-on: ubuntu-latest
-    steps:
-      - name: Log in with Azure
-        uses: azure/login@v1
-        with:
-          creds: "${{ secrets.AZURE_CREDENTIALS }}"
-          enable-AzPSSession: true
 
-      - name: Create Resource Group
-        id: create_resource_group
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az group create --name ${{ needs.variables.outputs.az_mgmt_resource_group }} --location ${{ needs.variables.outputs.location }}
+# ALREADY WORKS
+#####################################################################################################################
+#   variables:
+#     uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/variables.yml@sp
+#   build-and-deploy:
+#     needs: variables
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Log in with Azure
+#         uses: azure/login@v1
+#         with:
+#           creds: "${{ secrets.AZURE_CREDENTIALS }}"
+#           enable-AzPSSession: true
+
+#       - name: Create Resource Group
+#         id: create_resource_group
+#         uses: azure/CLI@v1
+#         with:
+#           inlineScript: |
+#             az group create --name ${{ needs.variables.outputs.az_mgmt_resource_group }} --location ${{ needs.variables.outputs.location }}
   
-      - name: Create Storage Account
-        id: create_storage_account
-        uses: azure/CLI@v1
-        with:
-            inlineScript: |
-              az storage account create --name  ${{ needs.variables.outputs.az_mgmt_storage_acc }} --resource-group  ${{ needs.variables.outputs.az_mgmt_resource_group }} --location  ${{ needs.variables.outputs.location }} --sku Standard_LRS --encryption-services blob
+#       - name: Create Storage Account
+#         id: create_storage_account
+#         uses: azure/CLI@v1
+#         with:
+#             inlineScript: |
+#               az storage account create --name  ${{ needs.variables.outputs.az_mgmt_storage_acc }} --resource-group  ${{ needs.variables.outputs.az_mgmt_resource_group }} --location  ${{ needs.variables.outputs.location }} --sku Standard_LRS --encryption-services blob
             
-      - name: Create Storage Container
-        id: create_storage_container
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name ${{ needs.variables.outputs.az_mgmt_storage_acc }}
+#       - name: Create Storage Container
+#         id: create_storage_container
+#         uses: azure/CLI@v1
+#         with:
+#           inlineScript: |
+#             az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name ${{ needs.variables.outputs.az_mgmt_storage_acc }}
 
-#   plan_dev:              
-#     needs: build-and-deploy
-#     uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@sp
-#     with:
-#       path: 0_All                                     ## Path to terraform root module {{Required}}
-#       tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
-#       az_resource_group: uksouth      ## AZ backend - AZURE Resource Group hosting terraform backend storage acc {{Required}}
-#       az_storage_acc: uksouth        ## AZ backend - AZURE terraform backend storage acc {{Required}}
-#       az_container_name: uksouth    ## AZ backend - AZURE storage container hosting state files {{Required}}
-#       tf_key: uksouth                             ## AZ backend - Specifies name that will be given to terraform state file and plan artifact {{Required}}
-#       tf_vars_file: uksouth                ## Terraform TFVARS {{Required}}
-#     secrets:
-#       arm_client_id: ${{ secrets.AZURE_AD_CLIENT_ID }}            ## ARM Client ID 
-#       arm_client_secret: ${{ secrets.AZURE_AD_CLIENT_SECRET }}     ## ARM Client Secret
-#       arm_subscription_id: ${{ secrets.AZURE_AD_SUBSCRIPTION_ID }}   ## ARM Subscription ID
-#       arm_tenant_id: ${{ secrets.AZURE_AD_TENANT_ID }}             ## ARM Tenant ID
+#####################################################################################################################
+
+
+  plan_dev:              
+    # needs: build-and-deploy
+    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@sp
+    with:
+      path: 0_All                                     ## Path to terraform root module {{Required}}
+      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
+      az_resource_group: uksouth      ## AZ backend - AZURE Resource Group hosting terraform backend storage acc {{Required}}
+      az_storage_acc: uksouth        ## AZ backend - AZURE terraform backend storage acc {{Required}}
+      az_container_name: uksouth    ## AZ backend - AZURE storage container hosting state files {{Required}}
+      tf_key: uksouth                             ## AZ backend - Specifies name that will be given to terraform state file and plan artifact {{Required}}
+      tf_vars_file: uksouth                ## Terraform TFVARS {{Required}}
+    secrets:
+      arm_client_id: ${{ secrets.AZURE_AD_CLIENT_ID }}            ## ARM Client ID 
+      arm_client_secret: ${{ secrets.AZURE_AD_CLIENT_SECRET }}     ## ARM Client Secret
+      arm_subscription_id: ${{ secrets.AZURE_AD_SUBSCRIPTION_ID }}   ## ARM Subscription ID
+      arm_tenant_id: ${{ secrets.AZURE_AD_TENANT_ID }}             ## ARM Tenant ID
 
 
 #   # deploy_dev:
