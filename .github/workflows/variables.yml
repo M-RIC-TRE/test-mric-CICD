@@ -47,6 +47,11 @@ jobs:
     # Map the job outputs to step outputs
     outputs:
       output1: ${{ steps.step1.outputs.var1 }}
+      output2: ${{ steps.step2.outputs.var2 }}
+      output3: ${{ steps.step3.outputs.var3 }}
+      output4: ${{ steps.step4.outputs.var4 }}
+      output5: ${{ steps.step5.outputs.var5 }}
+      output6: ${{ steps.step6.outputs.var6 }}
     steps:
       - id: step1
         run: echo "var1=${{ env.az_mgmt_resource_group }}" >> $GITHUB_OUTPUT
