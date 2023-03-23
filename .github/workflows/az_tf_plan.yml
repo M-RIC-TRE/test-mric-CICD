@@ -48,7 +48,7 @@ on:
         required: true
 
 env:
-  RESOURCE_GROUP: ${{ vars.RESOURCE_GROUP }}
+  RESOURCE_GROUP: ${{ vars.RESOURCE_GROUP_NAME }}
 
 jobs:
   build-plan:
