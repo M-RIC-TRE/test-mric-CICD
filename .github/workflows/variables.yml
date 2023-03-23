@@ -2,20 +2,25 @@ name: Reusable variables
 
 on:
   workflow_call:
+
+# VARIABLES NEED TO BE ADDED TO THE OUTPUT
     outputs:
       az_mgmt_resource_group:
         description: " AZ backend - AZURE Resource Group hosting terraform backend storage acc"
         value: ${{ jobs.generate_variables.outputs.output1 }}
+
+# DECLARE VARIABLES HERE
 env:
   az_mgmt_resource_group: "rg-terraform-state"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
 
+# ADD VARIABLES TO OUTPUTS AND STEPS
 jobs:
   generate_variables:
-    name: Generate output
+    name: Generate common variables
     runs-on: ubuntu-latest
     # Map the job outputs to step outputs
     outputs:
-      output1: ${{ steps.step1.outputs.firstword }}
+      output1: ${{ steps.step1.outputs.var1 }}
     steps:
       - id: step1
-        run: echo "firstword=${{ env.az_mgmt_resource_group }}" >> $GITHUB_OUTPUT
+        run: echo "var1=${{ env.az_mgmt_resource_group }}" >> $GITHUB_OUTPUT
