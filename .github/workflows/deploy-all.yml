@@ -6,7 +6,7 @@ on:
       - sp
 jobs:
   variables:
-    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/variables.yml@sp
+    uses: .github/workflows/variables.yml@sp
   build-and-deploy:
     needs: variables
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
 
   plan_dev:              
     needs: build-and-deploy
-    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/az_tf_plan.yml@sp
+    uses: .github/workflows/az_tf_plan.yml@sp
     with:
       path: 0_All                                     ## Path to terraform root module {{Required}}
       tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
