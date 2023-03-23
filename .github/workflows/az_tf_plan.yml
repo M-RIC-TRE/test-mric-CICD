@@ -55,6 +55,7 @@ jobs:
     uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/variables.yml@sp
   build-plan:
     runs-on: ubuntu-latest
+    needs: varss
     defaults:
       run:
         shell: bash
