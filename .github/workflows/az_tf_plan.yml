@@ -55,6 +55,7 @@ jobs:
     uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/variables.yml@sp
   build-plan:
     runs-on: ubuntu-latest
+    needs: vars
     defaults:
       run:
         shell: bash
@@ -78,8 +79,7 @@ jobs:
       #  run: echo " rg ${{ env.RESOURCE_GROUP}}" 
       - name: check common variables
         run: echo " rg ${{ vars.outputs.az_mgmt_resource_group }}" 
-      - name: check common variables
-        run: echo " rg ${{ vars.outputs.test_output }}" 
+
 
       # - name: Setup Terraform
       #   uses: hashicorp/setup-terraform@v2.0.3
