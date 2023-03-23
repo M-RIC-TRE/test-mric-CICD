@@ -6,7 +6,7 @@ on:
       - sp
 jobs:
   variables:
-    uses: ./.github/workflows/variables.yml@sp
+    uses: ./.github/workflows/variables.yml
   build-and-deploy:
     needs: variables
     runs-on: ubuntu-latest
