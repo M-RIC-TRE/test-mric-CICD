@@ -1,7 +1,20 @@
-variables:
+name: Reusable variables
+
+on:
+  workflow_call:
+
+env:
   az_mgmt_resource_group: "rg-terraform-state"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
-  az_mgmt_storage_acc: "stamrictfstates"          # AZ backend - AZURE terraform backend storage acc
-  az_mgmt_container_name: "tfstate"                # AZ backend - AZURE storage container hosting state files
-  location: "uksouth"                                     # Location for all resources 
+  az_mgmt_storage_acc: "stamrictfstates"         # AZ backend - AZURE terraform backend storage acc
+  az_mgmt_container_name: "tfstate"              # AZ backend - AZURE storage container hosting state files
+  location: "uksouth"                            # Location for all resources 
   tf_key: "terraform.state"
   tf_vars_file: "config_"
+  
+jobs:
+  generat_variables:
+    name: Generate Variables
+    runs-on: ubuntu-latest
+    # Map the job outputs to step outputs
+    outputs:
+      az_mgmt_resource_group: ${{ env.az_mgmt_resource_group }}
