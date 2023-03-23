@@ -6,7 +6,7 @@ on:
       - sp
 jobs:
   variables:
-    uses: /.github/workflows/variables.yml
+    uses: M-RIC-TRE/infrastructure-landing-mric/.github/workflows/variables.yml@sp
   build-and-deploy:
     needs: variables
     runs-on: ubuntu-latest
