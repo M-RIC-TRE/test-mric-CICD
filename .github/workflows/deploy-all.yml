@@ -48,8 +48,7 @@ jobs:
     with:
       path: 0_All                                     ## Path to terraform root module {{Required}}
       tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
-    secrets:
-      AZURE_CREDENTIALS: "${{ secrets.AZURE_CREDENTIALS }}"
+    secrets: inherit
 
 #   plan_dev:              
 #     #needs: build-and-deploy
