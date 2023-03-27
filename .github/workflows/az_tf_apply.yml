@@ -40,11 +40,6 @@ jobs:
         working-directory: ${{ inputs.path }}
         
     env:
-#       STORAGE_ACCOUNT: ${{ inputs.az_storage_acc }}
-#       CONTAINER_NAME: ${{ inputs.az_container_name }}
-#       RESOURCE_GROUP: ${{ inputs.az_resource_group }}
-#       TF_KEY: ${{ inputs.tf_key }}.tfstate
-      ###AZURE Client details###
       ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_AD_SUBSCRIPTION_ID }}
