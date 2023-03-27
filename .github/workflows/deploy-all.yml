@@ -1,9 +1,9 @@
 name: 'Deploy-terraform'
 on:
   workflow_dispatch:
-  push:
-     branches:
-       - sp
+#   push:
+#      branches:
+#        - sp
 jobs:
   variables:
     uses: ./.github/workflows/variables.yml
