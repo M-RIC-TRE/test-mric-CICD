@@ -54,4 +54,4 @@ jobs:
     with:
       path: tf_core                                   ## Path to terraform root module {{Required}}
       tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
-      secrets: inherit
+    secrets: inherit
