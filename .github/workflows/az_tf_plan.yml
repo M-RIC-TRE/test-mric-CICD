@@ -14,13 +14,13 @@ on:
         default: latest
         
     secrets:
-      ARM_CLIENT_ID:
+      AZURE_AD_CLIENT_ID:
         required: true
-      ARM_CLIENT_SECRET:
+      AZURE_AD_CLIENT_SECRET:
         required: true
-      ARM_SUBSCRIPTION_ID:
+      AZURE_AD_SUBSCRIPTION_ID:
         required: true
-      ARM_TENANT_ID:
+      AZURE_AD_TENANT_ID:
         required: true
 
 jobs:
