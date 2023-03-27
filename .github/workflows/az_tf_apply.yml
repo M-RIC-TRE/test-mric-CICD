@@ -12,37 +12,24 @@ on:
         required: false
         type: string
         default: latest
-      az_resource_group:
-        description: 'Specifies the Azure Resource Group where the backend storage account is hosted.'
-        required: true
+      gh_environment:
+        required: false
         type: string
-      az_storage_acc:
-        description: 'Specifies the Azure Storage Account where the backend state is hosted.'
-        required: true
-        type: string
-      az_container_name:
-        description: 'Specifies the Azure Storage account container where backend Terraform state is hosted.'
-        required: true
-        type: string
-      tf_key:
-        description: 'Specifies the Terraform state file name. Workflow artifact will be the same name.'
-        required: true
-        type: string
+        default: dev      
+
     secrets:
-      arm_client_id:
-        description: 'Specifies the Azure ARM CLIENT ID.'
+      AZURE_AD_CLIENT_ID:
         required: true
-      arm_client_secret:
-        description: 'Specifies the Azure ARM CLIENT SECRET.'
+      AZURE_AD_CLIENT_SECRET:
         required: true
-      arm_subscription_id:
-        description: 'Specifies the Azure ARM SUBSCRIPTION ID.'
+      AZURE_AD_SUBSCRIPTION_ID:
         required: true
-      arm_tenant_id:
-        description: 'Specifies the Azure ARM TENANT ID.'
+      AZURE_AD_TENANT_ID:
         required: true
 
 jobs:
+  variables:
+    uses: ./.github/workflows/variables.yml
   apply-plan:
     runs-on: ubuntu-latest
     environment: ${{ inputs.gh_environment }}
@@ -50,11 +37,12 @@ jobs:
       run:
         shell: bash
         working-directory: ${{ inputs.path }}
+        
     env:
-      STORAGE_ACCOUNT: ${{ inputs.az_storage_acc }}
-      CONTAINER_NAME: ${{ inputs.az_container_name }}
-      RESOURCE_GROUP: ${{ inputs.az_resource_group }}
-      TF_KEY: ${{ inputs.tf_key }}.tfstate
+#       STORAGE_ACCOUNT: ${{ inputs.az_storage_acc }}
+#       CONTAINER_NAME: ${{ inputs.az_container_name }}
+#       RESOURCE_GROUP: ${{ inputs.az_resource_group }}
+#       TF_KEY: ${{ inputs.tf_key }}.tfstate
       ###AZURE Client details###
       ARM_CLIENT_ID: ${{ secrets.arm_client_id }}
       ARM_CLIENT_SECRET: ${{ secrets.arm_client_secret }}
@@ -65,11 +53,11 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v3.0.2
         with:
-          name: ${{ inputs.tf_key }}
+          name: ${{ needs.variables.outputs.tf_key }}
           path: ${{ inputs.path }}
 
       - name: Decompress TF Plan artifact
-        run: unzip ${{ inputs.tf_key }}.zip
+        run: unzip ${{ needs.variables.outputs.tf_key }}.zip
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2.0.3
@@ -77,8 +65,12 @@ jobs:
           terraform_version: ${{ inputs.tf_version }}
 
       - name: Terraform Init
-        id: init
-        run: terraform init --backend-config="storage_account_name=$STORAGE_ACCOUNT" --backend-config="container_name=$CONTAINER_NAME" --backend-config="resource_group_name=$RESOURCE_GROUP" --backend-config="key=$TF_KEY"
+        run: | 
+          terraform init \
+          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}" \
+          --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
+          --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
+          --backend-config="key=${{ needs.variables.outputs.tf_key }}"
 
       - name: Terraform Apply
         run: terraform apply plan.tfplan
