@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 #   push:
 #      branches:
-#        - sp
+#        - main
 jobs:
   variables:
     uses: ./.github/workflows/variables.yml
