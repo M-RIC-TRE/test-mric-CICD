@@ -1,0 +1,67 @@
+name: Reusable variables
+
+on:
+  workflow_call:
+
+# VARIABLES NEED TO BE ADDED TO THE OUTPUT
+    outputs:
+      
+      az_mgmt_resource_group:
+        description: "AZ backend - AZURE Resource Group hosting terraform backend storage acc"
+        value: ${{ jobs.generate_variables.outputs.output1 }}
+      
+      az_mgmt_storage_acc:
+        description: "AZ backend - AZURE terraform backend storage acc"
+        value: ${{ jobs.generate_variables.outputs.output2 }}
+      
+      az_mgmt_container_name:
+        description: "AZ backend - AZURE storage container hosting state files"
+        value: ${{ jobs.generate_variables.outputs.output3 }}
+      
+      location:
+        description: "Location for all resources"
+        value: ${{ jobs.generate_variables.outputs.output4 }}
+      
+      tf_key:
+        description: "TF Key"
+        value: ${{ jobs.generate_variables.outputs.output5 }}
+      
+      tf_vars_file:
+        description: " AZ backend - AZURE Resource Group hosting terraform backend storage acc"
+        value: ${{ jobs.generate_variables.outputs.output6 }}
+
+# DECLARE VARIABLES HERE
+env:
+  az_mgmt_resource_group: "rg-terraform-state"   # AZ backend - AZURE Resource Group hosting terraform backend storage acc
+  az_mgmt_storage_acc: "stamrictfstates12"       # AZ backend - AZURE terraform backend storage acc
+  az_mgmt_container_name: "tfstate"              # AZ backend - AZURE storage container hosting state files
+  location: "uksouth"                            # Location for all resources 
+  tf_key: "terraform.state"
+  tf_vars_file: "config_"
+
+# ADD VARIABLES TO OUTPUTS AND STEPS
+jobs:
+  generate_variables:
+    name: Generate common variables
+    runs-on: ubuntu-latest
+    # Map the job outputs to step outputs
+    outputs:
+      output1: ${{ steps.step1.outputs.var1 }}
+      output2: ${{ steps.step2.outputs.var2 }}
+      output3: ${{ steps.step3.outputs.var3 }}
+      output4: ${{ steps.step4.outputs.var4 }}
+      output5: ${{ steps.step5.outputs.var5 }}
+      output6: ${{ steps.step6.outputs.var6 }}
+    steps:
+      - id: step1
+        run: echo "var1=${{ env.az_mgmt_resource_group }}" >> $GITHUB_OUTPUT
+      - id: step2
+        run: echo "var2=${{ env.az_mgmt_storage_acc }}" >> $GITHUB_OUTPUT
+      - id: step3
+        run: echo "var3=${{ env.az_mgmt_container_name }}" >> $GITHUB_OUTPUT
+      - id: step4
+        run: echo "var4=${{ env.location }}" >> $GITHUB_OUTPUT
+      - id: step5
+        run: echo "var5=${{ env.tf_key }}" >> $GITHUB_OUTPUT
+      - id: step6
+        run: echo "var6=${{ env.tf_vars_file }}" >> $GITHUB_OUTPUT
