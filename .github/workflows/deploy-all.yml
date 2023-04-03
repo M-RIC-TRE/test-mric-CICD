@@ -10,6 +10,7 @@ jobs:
   build-and-deploy:
     needs: variables
     runs-on: ubuntu-latest
+    environment: d
     steps:
       - name: Log in with Azure
         uses: azure/login@v1
