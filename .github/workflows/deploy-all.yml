@@ -39,82 +39,93 @@ jobs:
           inlineScript: |
             az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev"
   
-  # Plan terraform in development containder
-  plan_dev:
-      needs: build_management_dev
-      uses: ./.github/workflows/az_tf_plan.yml
-      name: deploy_plan
-      with:
-        path: tf_core                                   ## Path to terraform root module {{Required}}
-        tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
-        environment: dev
-      secrets: inherit
+########################################################################################################################################
 
-  # Deploy terraform
-  deploy_dev:
-    needs: plan_dev
-    uses: ./.github/workflows/az_tf_apply.yml
-    name: deploy_terraform
-    with:
-      path: tf_core                                   ## Path to terraform root module {{Required}}
-      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
-      environment: dev
-    secrets: inherit
-
-# ###################### Production #################################################################################################################
-
-# Create management resource group 
-  build_management_prod:
-    needs: deploy_dev
+  build-plan:
     runs-on: ubuntu-latest
-    environment: prod
+    needs: build_management_dev
+    environment: dev
+    defaults:
+      run:
+        shell: bash
+        working-directory: tf_core
     steps:
-      - name: Log in with Azure
-        uses: azure/login@v1
-        with:
-          creds: "${{ secrets.AZURE_CREDENTIALS }}"
-          enable-AzPSSession: true
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
 
-      - name: Create Resource Group
-        id: create_resource_group
-        uses: azure/CLI@v1
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2.0.3
         with:
-          inlineScript: |
-            az group create --name ${{ needs.variables.outputs.az_mgmt_resource_group }} --location ${{ needs.variables.outputs.location }}
+          terraform_version: latest
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt --check
+
+      - name: Terraform Init
+        id: init
+        run: | 
+          terraform init \
+          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}" \
+          --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
+          --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
+          --backend-config="key=${{ needs.variables.outputs.tf_key }}"
+      
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan --var-file="${{ needs.variables.outputs.tf_vars_file }}dev.tfvars.json" --out=plan.tfplan -input=false
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Compress TF Plan artifact
+        run: zip -r ${{ needs.variables.outputs.tf_key }}.zip ./*
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: "${{ needs.variables.outputs.tf_key }}"
+          path: "${{ inputs.path }}/${{ needs.variables.outputs.tf_key }}.zip"
+          retention-days: 5
+
+
+
+
+
+
   
-      - name: Create Storage Account
-        id: create_storage_account
-        uses: azure/CLI@v1
-        with:
-            inlineScript: |
-              az storage account create --name ${{ needs.variables.outputs.az_mgmt_storage_acc }} --resource-group  ${{ needs.variables.outputs.az_mgmt_resource_group }} --location  ${{ needs.variables.outputs.location }} --sku Standard_LRS --encryption-services blob
-            
-      - name: Create Storage Container
-        id: create_storage_container
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name ${{ needs.variables.outputs.az_mgmt_storage_acc }}
+#############################################
+####  DOES NOT READ ENVIRONMENTAL SECRETS ###
+#############################################
 
-  plan_prod:
-    needs: build_management_prod
-    uses: ./.github/workflows/az_tf_plan.yml
-    name: deploy_plan_prod
-    with:
-      path: tf_core                                   ## Path to terraform root module {{Required}}
-      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
-      environment: prod
-    secrets: inherit
 
-  deploy_prod:
-    needs: plan_prod
-    uses: ./.github/workflows/az_tf_apply.yml
-    name: deploy_terraform_prod
-    with:
-      path: tf_core                                   ## Path to terraform root module {{Required}}
-      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
-      environment: dev
-    secrets: inherit
+#   # Plan terraform in development containder
+#   plan_dev:
+#       needs: build_management_dev
+#       uses: ./.github/workflows/az_tf_plan.yml
+#       name: deploy_plan
+#       with:
+#         path: tf_core                                   ## Path to terraform root module {{Required}}
+#         tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
+#         environment: dev
+#       secrets: inherit
+
+#   # Deploy terraform
+#   deploy_dev:
+#     needs: plan_dev
+#     uses: ./.github/workflows/az_tf_apply.yml
+#     name: deploy_terraform
+#     with:
+#       path: tf_core                                   ## Path to terraform root module {{Required}}
+#       tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
+#       environment: dev
+#     secrets: inherit
 
 
 
