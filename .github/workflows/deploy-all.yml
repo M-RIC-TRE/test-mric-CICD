@@ -107,7 +107,7 @@ jobs:
     secrets: inherit
 
   deploy_prod:
-    needs: plan_dev
+    needs: plan_prod
     uses: ./.github/workflows/az_tf_apply.yml
     name: deploy_terraform_prod
     with:
