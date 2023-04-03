@@ -37,7 +37,7 @@ jobs:
             az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev"
 
   build-and-deploy_prod:
-    needs: variables
+    needs: build-and-deploy_dev
     runs-on: ubuntu-latest
     environment: prod
     steps:
