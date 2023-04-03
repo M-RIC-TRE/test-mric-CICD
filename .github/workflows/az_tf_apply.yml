@@ -12,10 +12,11 @@ on:
         required: false
         type: string
         default: latest
-      gh_environment:
+      environment:
+        description: 'Specifies deployment environment.'
         required: false
         type: string
-        default: dev      
+        default: dev  
 
     secrets:
       ARM_CLIENT_ID:
@@ -33,7 +34,7 @@ jobs:
   apply-plan:
     needs: variables
     runs-on: ubuntu-latest
-    # environment: ${{ inputs.gh_environment }}
+    environment: ${{ inputs.environment }}
     defaults:
       run:
         shell: bash
