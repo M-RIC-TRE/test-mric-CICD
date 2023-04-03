@@ -10,7 +10,7 @@ jobs:
   build-and-deploy:
     needs: variables
     runs-on: ubuntu-latest
-    environment: d
+    environment: dev
     steps:
       - name: Log in with Azure
         uses: azure/login@v1
@@ -39,21 +39,23 @@ jobs:
           inlineScript: |
             az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name ${{ needs.variables.outputs.az_mgmt_storage_acc }}
 
-  plan_dev:
-    needs: build-and-deploy
-    uses: ./.github/workflows/az_tf_plan.yml
-    name: deploy_plan
-    with:
-      path: tf_core                                   ## Path to terraform root module {{Required}}
-      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
-    secrets: inherit
+#   plan_dev:
+#     needs: build-and-deploy
+#     uses: ./.github/workflows/az_tf_plan.yml
+#     name: deploy_plan
+#     with:
+#       path: tf_core                                   ## Path to terraform root module {{Required}}
+#       tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
+#       environment: dev
+#     secrets: inherit
 
-  deploy_dev:
-    needs: plan_dev
-    uses: ./.github/workflows/az_tf_apply.yml
-    name: deploy_terraform
-    with:
-      path: tf_core                                   ## Path to terraform root module {{Required}}
-      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
-    secrets: inherit
+#   deploy_dev:
+#     needs: plan_dev
+#     uses: ./.github/workflows/az_tf_apply.yml
+#     name: deploy_terraform
+#     with:
+#       path: tf_core                                   ## Path to terraform root module {{Required}}
+#       tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
+#       environment: dev
+#     secrets: inherit
 
