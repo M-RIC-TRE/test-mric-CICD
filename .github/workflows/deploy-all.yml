@@ -2,9 +2,12 @@ name: 'Deploy-terraform'
 on:
   workflow_dispatch:
 jobs:
-  variables:
+  # Get variable files (currently on for all environments)
+  variables: 
     uses: ./.github/workflows/variables.yml
-  build-and-deploy_dev:
+  
+  # Create management resource group
+  build_management_dev:
     needs: variables
     runs-on: ubuntu-latest
     environment: dev
@@ -35,9 +38,34 @@ jobs:
         with:
           inlineScript: |
             az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev"
+  
+  # Plan terraform in development containder
+  plan_dev:
+      needs: build_management_dev
+      uses: ./.github/workflows/az_tf_plan.yml
+      name: deploy_plan
+      with:
+        path: tf_core                                   ## Path to terraform root module {{Required}}
+        tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
+        environment: dev
+      secrets: inherit
 
-  build-and-deploy_prod:
-    needs: build-and-deploy_dev
+  # Deploy terraform
+  deploy_dev:
+    needs: plan_dev
+    uses: ./.github/workflows/az_tf_apply.yml
+    name: deploy_terraform
+    with:
+      path: tf_core                                   ## Path to terraform root module {{Required}}
+      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
+      environment: dev
+    secrets: inherit
+
+# ###################### Production #################################################################################################################
+
+# Create management resource group 
+  build_management_prod:
+    needs: deploy_dev
     runs-on: ubuntu-latest
     environment: prod
     steps:
@@ -67,6 +95,28 @@ jobs:
         with:
           inlineScript: |
             az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name ${{ needs.variables.outputs.az_mgmt_storage_acc }}
+
+  plan_prod:
+    needs: build_management_prod
+    uses: ./.github/workflows/az_tf_plan.yml
+    name: deploy_plan_prod
+    with:
+      path: tf_core                                   ## Path to terraform root module {{Required}}
+      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
+      environment: prod
+    secrets: inherit
+
+  deploy_prod:
+    needs: plan_dev
+    uses: ./.github/workflows/az_tf_apply.yml
+    name: deploy_terraform_prod
+    with:
+      path: tf_core                                   ## Path to terraform root module {{Required}}
+      tf_version: latest                              ## Terraform version e.g: 1.1.0 Default=latest {{Optional}}
+      environment: dev
+    secrets: inherit
+
+
 
 
 #   plan_dev:
