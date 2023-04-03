@@ -77,7 +77,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan --var-file="${{ needs.variables.outputs.tf_vars_file }}dev.tfvars.json" --out=plan.tfplan -input=false
+        run: terraform plan --var-file=config_dev.tfvars.json --out=plan.tfplan -input=false
         continue-on-error: true
 
       - name: Terraform Plan Status
