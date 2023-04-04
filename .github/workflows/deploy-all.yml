@@ -1,4 +1,4 @@
-name: 'Deploy-terraform'
+name: 'Deploy-all'
 on:
 # # Push will create plan and deploy to a production workspace
 #   push:
