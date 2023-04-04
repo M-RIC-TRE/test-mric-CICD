@@ -35,14 +35,14 @@ jobs:
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   
     steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v3.0.2
-        with:
-          name: ${{ needs.variables.outputs.tf_key }}
-          path: tf_core
+#       - name: Download Artifact
+#         uses: actions/download-artifact@v3.0.2
+#         with:
+#           name: ${{ needs.variables.outputs.tf_key }}
+#           path: tf_core
 
-      - name: Decompress TF Plan artifact
-        run: unzip ${{ needs.variables.outputs.tf_key }}.zip
+#       - name: Decompress TF Plan artifact
+#         run: unzip ${{ needs.variables.outputs.tf_key }}.zip
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2.0.3
