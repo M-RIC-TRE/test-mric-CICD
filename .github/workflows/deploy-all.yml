@@ -45,14 +45,14 @@ jobs:
         uses: azure/CLI@v1
         with:
             inlineScript: |
-              az storage account create --name  "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --resource-group  ${{ needs.variables.outputs.az_mgmt_resource_group }} --location  ${{ needs.variables.outputs.location }} --sku Standard_LRS --encryption-services blob
+              az storage account create --name  "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod" --resource-group  ${{ needs.variables.outputs.az_mgmt_resource_group }} --location  ${{ needs.variables.outputs.location }} --sku Standard_LRS --encryption-services blob
             
       - name: Create Storage Container
         id: create_storage_container
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev"
+            az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod"
   
 ########################################################################################################################################
 # Development
