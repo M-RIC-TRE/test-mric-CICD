@@ -100,7 +100,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         with:
           name: "${{ needs.variables.outputs.tf_key }}"
-          path: "$tf_core/${{ needs.variables.outputs.tf_key }}.zip"
+          path: "tf_core/${{ needs.variables.outputs.tf_key }}.zip"
           retention-days: 5
 
 # #  Deploy to devp
