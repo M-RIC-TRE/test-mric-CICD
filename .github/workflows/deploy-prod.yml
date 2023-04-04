@@ -1,4 +1,4 @@
-name: 'Deploy-terraform'
+name: 'Deploy-terraform-prod'
 on:
 
 # Approved Pull request will create plan and deploy to a production workspace
