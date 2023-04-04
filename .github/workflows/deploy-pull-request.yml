@@ -1,4 +1,4 @@
-name: 'Deploy-all'
+name: 'Deploy-pull-request'
 on:
   pull_request:
     branches:
