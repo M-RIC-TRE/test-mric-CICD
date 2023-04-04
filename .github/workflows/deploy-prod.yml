@@ -43,24 +43,24 @@ jobs:
           name: ${{ needs.variables.outputs.tf_key }}
           path: tf_core
 
-      - name: Decompress TF Plan artifact
-        run: unzip ${{ needs.variables.outputs.tf_key }}.zip
+#       - name: Decompress TF Plan artifact
+#         run: unzip ${{ needs.variables.outputs.tf_key }}.zip
       
-      # Setup and deploy
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2.0.3
-        with:
-          terraform_version: latest
+#       # Setup and deploy
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v2.0.3
+#         with:
+#           terraform_version: latest
 
-      - name: Terraform Init
-        run: | 
-          terraform init \
-          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" \
-          --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
-          --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
-          --backend-config="key=${{ needs.variables.outputs.tf_key }}"
-      - name: Terraform Apply
-        run: terraform apply plan.tfplan
+#       - name: Terraform Init
+#         run: | 
+#           terraform init \
+#           --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" \
+#           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
+#           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
+#           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
+#       - name: Terraform Apply
+#         run: terraform apply plan.tfplan
         
         
         
