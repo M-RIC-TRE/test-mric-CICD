@@ -3,7 +3,7 @@ on:
  # Pull will create plan and deploy to a development workspace
    pull_request:
      branches: 
-       - main      
+       - 'main'      
   workflow_dispatch:
   
 jobs:
