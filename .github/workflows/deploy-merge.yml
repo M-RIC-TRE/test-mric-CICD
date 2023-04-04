@@ -6,7 +6,9 @@ on:
     branches: 
        - main  
     types: [submitted]
-    
+#   push:
+#     branches:
+#       - main
   workflow_dispatch:
   
 jobs:
@@ -19,7 +21,7 @@ jobs:
 ###########                               Dev                               ##########################
 ######################################################################################################
 
-  apply-plan:
+  terraform-apply:
     needs: variables
     runs-on: ubuntu-latest
     environment: dev
@@ -43,22 +45,6 @@ jobs:
         with:
           terraform_version: latest
       
-#       # Artifacts from the Plan
-#       - name: Download Artifact
-#         uses: actions/download-artifact@v3.0.2
-#         with:
-#           name: ${{ needs.variables.outputs.tf_key }}
-#           # path: tf_core
-
-#       - name: Decompress TF Plan artifact
-#         run: unzip ${{ needs.variables.outputs.tf_key }}.zip
-      
-#       # Setup and deploy
-#       - name: Setup Terraform
-#         uses: hashicorp/setup-terraform@v2.0.3
-#         with:
-#           terraform_version: latest
-
       - name: Terraform Init
         run: | 
           terraform init \
@@ -66,25 +52,14 @@ jobs:
           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
-  
-        # Artifacts from the Plan
-      - name: Download Artifact
-        uses: actions/download-artifact@v3.0.2
-        with:
-          name: ${{ needs.variables.outputs.tf_key }}
-          # path: tf_core
-
-#       - name: Decompress TF Plan artifact
-#         run: unzip ${{ needs.variables.outputs.tf_key }}.zip
-      
-#       # Setup and deploy
-#       - name: Setup Terraform
-#         uses: hashicorp/setup-terraform@v2.0.3
-#         with:
-#           terraform_version: latest
           
-#       - name: Terraform Apply
-#         run: terraform apply plan.tfplan
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event.review.state == 'approved' # github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
+        
+      
+        
+        
         
         
         
