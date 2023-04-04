@@ -66,9 +66,25 @@ jobs:
           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
+  
+        # Artifacts from the Plan
+      - name: Download Artifact
+        uses: actions/download-artifact@v3.0.2
+        with:
+          name: ${{ needs.variables.outputs.tf_key }}
+          # path: tf_core
+
+#       - name: Decompress TF Plan artifact
+#         run: unzip ${{ needs.variables.outputs.tf_key }}.zip
+      
+#       # Setup and deploy
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v2.0.3
+#         with:
+#           terraform_version: latest
           
-      - name: Terraform Apply
-        run: terraform apply plan.tfplan
+#       - name: Terraform Apply
+#         run: terraform apply plan.tfplan
         
         
         
