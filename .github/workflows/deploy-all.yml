@@ -1,5 +1,14 @@
 name: 'Deploy-terraform'
 on:
+# # Push will create plan and deploy to a production workspace
+#   push:
+#     branches: 
+#       - main
+# # Pull will create plan and deploy to a development workspace
+#   pull_request:
+#     branches: 
+#       - main
+      
   workflow_dispatch:
 jobs:
   # Get variable files (currently on for all environments)  
@@ -41,6 +50,7 @@ jobs:
   
 ########################################################################################################################################
 
+ # Build plan
   build-plan:
     runs-on: ubuntu-latest
     needs: build_management_dev
@@ -79,12 +89,6 @@ jobs:
       - name: Terraform Validate
         id: validate
         run: terraform validate
-      
-#       - name: Log in with Azure
-#         uses: azure/login@v1
-#         with:
-#           creds: "${{ secrets.AZURE_CREDENTIALS }}"
-#           enable-AzPSSession: true
 
       - name: Terraform Plan
         id: plan
@@ -94,6 +98,8 @@ jobs:
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
+
+#   Plan artifact 
 
       - name: Compress TF Plan artifact
         run: zip -r ${{ needs.variables.outputs.tf_key }}.zip ./*
@@ -105,8 +111,9 @@ jobs:
           path: "${{ inputs.path }}/${{ needs.variables.outputs.tf_key }}.zip"
           retention-days: 5
 
-
-
+# Deploy to devp
+      - name: Terraform Apply
+        run: terraform apply plan.tfplan
 
 
 
