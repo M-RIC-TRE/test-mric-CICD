@@ -93,15 +93,15 @@ jobs:
         continue-on-error: true
 
 # Save plan for re-use in build
-#       - name: Compress TF Plan artifact
-#         run: zip -r ${{ needs.variables.outputs.tf_key }}.zip ./*
+      - name: Compress TF Plan artifact
+        run: zip -r ${{ needs.variables.outputs.tf_key }}.zip ./*
         
-#       - name: Upload Artifact
-#         uses: actions/upload-artifact@v3.1.2
-#         with:
-#           name: "${{ needs.variables.outputs.tf_key }}"
-#           path: "${{ inputs.path }}/${{ needs.variables.outputs.tf_key }}.zip"
-#           retention-days: 5
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: "${{ needs.variables.outputs.tf_key }}"
+          path: "$tf_core/${{ needs.variables.outputs.tf_key }}.zip"
+          retention-days: 5
 
 # #  Deploy to devp
 #       - name: Terraform Apply
