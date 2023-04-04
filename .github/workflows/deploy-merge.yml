@@ -1,4 +1,4 @@
-name: 'Deploy-terraform-prod'
+name: 'Deploy-terraform-merge'
 on:
 
 # Approved Pull request will create plan and deploy to a production workspace
@@ -35,13 +35,20 @@ jobs:
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   
     steps:
-      
-      # Artifacts from the Plan
-      - name: Download Artifact
-        uses: actions/download-artifact@v3.0.2
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2.0.3
         with:
-          name: ${{ needs.variables.outputs.tf_key }}
-          # path: tf_core
+          terraform_version: latest
+      
+#       # Artifacts from the Plan
+#       - name: Download Artifact
+#         uses: actions/download-artifact@v3.0.2
+#         with:
+#           name: ${{ needs.variables.outputs.tf_key }}
+#           # path: tf_core
 
 #       - name: Decompress TF Plan artifact
 #         run: unzip ${{ needs.variables.outputs.tf_key }}.zip
@@ -52,15 +59,16 @@ jobs:
 #         with:
 #           terraform_version: latest
 
-#       - name: Terraform Init
-#         run: | 
-#           terraform init \
-#           --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" \
-#           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
-#           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
-#           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
-#       - name: Terraform Apply
-#         run: terraform apply plan.tfplan
+      - name: Terraform Init
+        run: | 
+          terraform init \
+          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" \
+          --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
+          --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
+          --backend-config="key=${{ needs.variables.outputs.tf_key }}"
+          
+      - name: Terraform Apply
+        run: terraform apply plan.tfplan
         
         
         
