@@ -20,7 +20,7 @@ jobs:
     if: github.event.review.state == 'approved'
     needs: variables
     runs-on: ubuntu-latest
-    environment: dev
+    environment: prod
     steps:
       - name: Log in with Azure
         uses: azure/login@v1
