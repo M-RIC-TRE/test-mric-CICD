@@ -4,7 +4,7 @@ on:
 # Approved Pull request will create plan and deploy to a production workspace
   pull_request_review:
     branches: 
-       - 'main'  
+       - main  
     types: [submitted]
     
   workflow_dispatch:
