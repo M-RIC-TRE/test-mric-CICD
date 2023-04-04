@@ -54,8 +54,8 @@ jobs:
           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
           
       - name: Terraform Apply
-        if: github.event.review.state == 'approved' # github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false
+        # if: github.event.review.state == 'approved' # github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false -var-file="config_dev.tfvars.json"
         
       
         
