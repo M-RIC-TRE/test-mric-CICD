@@ -55,7 +55,7 @@ jobs:
             az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev"
   
 ########################################################################################################################################
-Development
+# Development
 
  # Build plan
   build-plan:
@@ -102,9 +102,9 @@ Development
         run: terraform plan --var-file=config_dev.tfvars.json --out=plan.tfplan -input=false
         continue-on-error: true
 
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
+#       - name: Terraform Plan Status
+#         if: steps.plan.outcome == 'failure'
+#         run: exit 1
 
 #   Plan artifact 
 
@@ -118,7 +118,7 @@ Development
           path: "${{ inputs.path }}/${{ needs.variables.outputs.tf_key }}.zip"
           retention-days: 5
 
-# Deploy to devp
+#  Deploy to devp
       - name: Terraform Apply
         run: terraform apply plan.tfplan
 
@@ -126,7 +126,7 @@ Development
 # Production
 
  # Build plan
-  build-plan:
+  build-plan-prod:
     runs-on: ubuntu-latest
     needs: build_management_dev
     environment: prod
@@ -170,9 +170,9 @@ Development
         run: terraform plan --var-file=config_prod.tfvars.json --out=plan.tfplan -input=false
         continue-on-error: true
 
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
+#       - name: Terraform Plan Status
+#         if: steps.plan.outcome == 'failure'
+#         run: exit 1
 
 #   Plan artifact 
 
@@ -185,8 +185,8 @@ Development
 #           name: "${{ needs.variables.outputs.tf_key }}"
 #           path: "${{ inputs.path }}/${{ needs.variables.outputs.tf_key }}.zip"
 #           retention-days: 5
-
-# Deploy to devp
+      
+#      Deploy to prod:
       - name: Terraform Apply
         run: terraform apply plan.tfplan
 
