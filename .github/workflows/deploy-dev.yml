@@ -3,8 +3,8 @@ on:
  # Pull will create plan and deploy to a development workspace
    pull_request:
      branches: 
-       - 'main'      
-  workflow_dispatch:
+       - main
+   workflow_dispatch:
   
 jobs:
   # Get variable files (currently on for all environments)  
