@@ -11,94 +11,148 @@ on:
   
 jobs:
   # Get variable files (currently on for all environments)  
+  
   variables: 
     uses: ./.github/workflows/variables.yml
   
-  # Create management resource group
-  build_management_prod:
-    # Only for approved requests
-    if: github.event.review.state == 'approved'
+######################################################################################################
+###########                               Dev                               ##########################
+######################################################################################################
+
+  apply-plan:
     needs: variables
     runs-on: ubuntu-latest
-    environment: prod
-    steps:
-      - name: Log in with Azure
-        uses: azure/login@v1
-        with:
-          creds: "${{ secrets.AZURE_CREDENTIALS }}"
-          enable-AzPSSession: true
-
-      - name: Create Resource Group
-        id: create_resource_group
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az group create --name ${{ needs.variables.outputs.az_mgmt_resource_group }} --location ${{ needs.variables.outputs.location }}
-  
-      - name: Create Storage Account
-        id: create_storage_account
-        uses: azure/CLI@v1
-        with:
-            inlineScript: |
-              az storage account create --name  "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod" --resource-group  ${{ needs.variables.outputs.az_mgmt_resource_group }} --location  ${{ needs.variables.outputs.location }} --sku Standard_LRS --encryption-services blob
-            
-      - name: Create Storage Container
-        id: create_storage_container
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod"
-  
-########################################################################################################################################
-# Production
-
- # Build plan
-  build-plan-prod:
-    # Only for approved requests
-    if: github.event.review.state == 'approved'       
-    runs-on: ubuntu-latest
-    needs: build_management_prod
-    environment: prod
-    env:
-       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+    environment: dev
     defaults:
       run:
         shell: bash
         working-directory: tf_core
+        
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3.3.0
+      - name: Download Artifact
+        uses: actions/download-artifact@v3.0.2
+        with:
+          name: ${{ needs.variables.outputs.tf_key }}
+          path: tf_core
+
+      - name: Decompress TF Plan artifact
+        run: unzip ${{ needs.variables.outputs.tf_key }}.zip
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2.0.3
         with:
           terraform_version: latest
 
-      - name: Terraform Format
-        id: fmt
-        run: terraform fmt --check
-
       - name: Terraform Init
-        id: init
         run: | 
           terraform init \
-          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prod" \
+          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" \
           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
-      
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate
-
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan --var-file=config_prod.tfvars.json --out=plan.tfplan -input=false
-        continue-on-error: true
-
-#      Deploy to prod:
       - name: Terraform Apply
         run: terraform apply plan.tfplan
+        
+        
+        
+        
+    
+    
+    
+    
+    
+  
+#   # Create management resource group
+#   build_management_prod:
+#     # Only for approved requests
+#     if: github.event.review.state == 'approved'
+#     needs: variables
+#     runs-on: ubuntu-latest
+#     environment: prod
+#     steps:
+#       - name: Log in with Azure
+#         uses: azure/login@v1
+#         with:
+#           creds: "${{ secrets.AZURE_CREDENTIALS }}"
+#           enable-AzPSSession: true
+
+#       - name: Create Resource Group
+#         id: create_resource_group
+#         uses: azure/CLI@v1
+#         with:
+#           inlineScript: |
+#             az group create --name ${{ needs.variables.outputs.az_mgmt_resource_group }} --location ${{ needs.variables.outputs.location }}
+  
+#       - name: Create Storage Account
+#         id: create_storage_account
+#         uses: azure/CLI@v1
+#         with:
+#             inlineScript: |
+#               az storage account create --name  "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod" --resource-group  ${{ needs.variables.outputs.az_mgmt_resource_group }} --location  ${{ needs.variables.outputs.location }} --sku Standard_LRS --encryption-services blob
+            
+#       - name: Create Storage Container
+#         id: create_storage_container
+#         uses: azure/CLI@v1
+#         with:
+#           inlineScript: |
+#             az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod"
+  
+# ########################################################################################################################################
+# # Production
+
+#  # Build plan
+#   build-plan-prod:
+#     # Only for approved requests
+#     if: github.event.review.state == 'approved'       
+#     runs-on: ubuntu-latest
+#     needs: build_management_prod
+#     environment: prod
+#     env:
+#        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+#        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+#        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+#        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+#     defaults:
+#       run:
+#         shell: bash
+#         working-directory: tf_core
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v3.3.0
+
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v2.0.3
+#         with:
+#           terraform_version: latest
+
+#       - name: Terraform Format
+#         id: fmt
+#         run: terraform fmt --check
+
+#       - name: Terraform Init
+#         id: init
+#         run: | 
+#           terraform init \
+#           --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prod" \
+#           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
+#           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
+#           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
+      
+#       - name: Terraform Validate
+#         id: validate
+#         run: terraform validate
+
+#       - name: Terraform Plan
+#         id: plan
+#         run: terraform plan --var-file=config_prod.tfvars.json --out=plan.tfplan -input=false
+#         continue-on-error: true
+
+# #      Deploy to prod:
+#       - name: Terraform Apply
+#         run: terraform apply plan.tfplan
