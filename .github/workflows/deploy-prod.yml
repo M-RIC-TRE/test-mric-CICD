@@ -41,7 +41,7 @@ jobs:
         uses: actions/download-artifact@v3.0.2
         with:
           name: ${{ needs.variables.outputs.tf_key }}
-          path: tf_core
+          # path: tf_core
 
 #       - name: Decompress TF Plan artifact
 #         run: unzip ${{ needs.variables.outputs.tf_key }}.zip
