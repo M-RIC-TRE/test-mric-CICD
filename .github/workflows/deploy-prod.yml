@@ -57,7 +57,7 @@ jobs:
     # Only for approved requests
     if: github.event.review.state == 'approved'       
     runs-on: ubuntu-latest
-    needs: variables
+    needs: build_management_prod
     environment: prod
     env:
        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
@@ -85,7 +85,7 @@ jobs:
         id: init
         run: | 
           terraform init \
-          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}" \
+          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prod" \
           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
