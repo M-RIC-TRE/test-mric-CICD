@@ -15,7 +15,7 @@ jobs:
     uses: ./.github/workflows/variables.yml
   
   # Create management resource group
-  build_management_dev:
+  build_management_prod:
     # Only for approved requests
     if: github.event.review.state == 'approved'
     needs: variables
