@@ -1,4 +1,4 @@
-name: 'Deploy-terraform'
+name: 'Deploy-terraform-dev'
 on:
  # Pull will create plan and deploy to a development workspace
    pull_request:
