@@ -1,8 +1,8 @@
 name: 'Deploy-pull-request'
 on:
-  pull_request:
-    branches:
-      - main
+#   pull_request:
+#     branches:
+#       - main
   workflow_dispatch:
   
 jobs:    
