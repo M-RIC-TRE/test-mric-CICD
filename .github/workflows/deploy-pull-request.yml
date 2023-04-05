@@ -95,6 +95,14 @@ jobs:
         run: terraform plan --var-file=config_dev.tfvars.json --out=plan.tfplan -input=false
         continue-on-error: true
       
+      - name: Upload TF Plan
+        uses: actions/upload-artifact@v2
+        with:
+          name: tf_plan
+          path: tf_core/tf_plan
+          if-no-files-found: error
+          retention-days: 1
+      
       # adds a comment to the pull request with the results of the format, init and plan steps  
       - name: Update Pull Request
         uses: actions/github-script@v6
