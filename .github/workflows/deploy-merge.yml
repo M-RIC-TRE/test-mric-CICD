@@ -41,7 +41,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        #working-directory: tf_core
+        working-directory: tf_core
     steps:
 #       - name: Download Artifact
 #         uses: actions/download-artifact@v3.0.2
