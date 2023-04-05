@@ -50,7 +50,7 @@ jobs:
  # Build plan
   build-plan:
     runs-on: ubuntu-latest
-    needs: build_management_dev
+    needs: [build_management_dev, variables]
     permissions:
       pull-requests: write
     environment: dev
@@ -120,7 +120,7 @@ jobs:
           azcliversion: latest
           inlineScript: |
             # az storage account upload
-            az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file plan.tfplan --auth-mode login --name plan.tfplan
+            az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file plan.tfplan --auth-mode login
           
     
       
