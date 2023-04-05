@@ -53,8 +53,11 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v3
         with:
-          name: plan.tfplan
-          path: tf_core/plan.tfplan
+          name: plan.tfplan.zip
+          path: tf_core/plan.tfplan.zip
+
+      - name: Decompress TF Plan artifact
+        run: unzip plan.tfplan.zip
           
       - name: Terraform Apply
         # if: github.event.review.state == 'approved' # github.ref == 'refs/heads/main' && github.event_name == 'push'
