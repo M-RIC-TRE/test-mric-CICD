@@ -149,7 +149,8 @@ jobs:
   build_terraform_development:
   #  if: github.event.review.state == 'approved'  ############################## Deploy on appoved
     runs-on: ubuntu-latest
-    needs: build_management_dev
+    needs: build-plan
+    # needs: [build-plan, variables]
     permissions:
       pull-requests: write
     environment: dev
