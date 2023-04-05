@@ -1,10 +1,11 @@
 name: 'Deploy-dev'
+################################# DOES NOT WORK AS EXPECTED
 on:
-  pull_request:
-    branches:
-      - main
-  pull_request_review:
-    types: [submitted]
+#   pull_request:
+#     branches:
+#       - main
+#   pull_request_review:
+#     types: [submitted]
   workflow_dispatch:
 
 
