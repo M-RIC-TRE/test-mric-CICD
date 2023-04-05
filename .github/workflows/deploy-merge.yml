@@ -62,7 +62,7 @@ jobs:
           azcliversion: latest
           inlineScript: |
             # az storage account donwload
-            cd tf_core
+            ls
             az storage blob donwload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --name plan.tfplan
             ls
     
