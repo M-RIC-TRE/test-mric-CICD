@@ -63,21 +63,7 @@ jobs:
           azcliversion: latest
           inlineScript: |
             # az storage account donwload
-            ls
             az storage blob download --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --name plan.tfplan --file plan.tfplan
-            ls
-    
-    
-      - name: List folders
-        uses: azure/CLI@v1
-        with:
-          azcliversion: latest
-          inlineScript: |
-            # az storage account donwload
-            ls
-            
-      - name: Checkout
-        uses: actions/checkout@v3.3.0
     
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2.0.3
@@ -90,11 +76,7 @@ jobs:
           --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" \
           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
-          --backend-config="key=${{ needs.variables.outputs.tf_key }}"
-    
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate      
+          --backend-config="key=${{ needs.variables.outputs.tf_key }}" 
       
       - name: Terraform Apply using plan
         run: terraform apply plan.tfplan
