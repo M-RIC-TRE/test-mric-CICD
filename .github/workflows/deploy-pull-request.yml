@@ -122,7 +122,7 @@ jobs:
             # az storage account upload
             cd tf_core
             ls
-            az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file plan.tfplan --auth-mode login
+            az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file plan.tfplan
           
     
       
