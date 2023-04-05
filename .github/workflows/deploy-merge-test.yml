@@ -1,8 +1,8 @@
 name: 'Deploy-terraform-merge-test'
 on:
-  pull_request:
-    types:
-      - closed
+#   pull_request:
+#     types:
+#       - closed
       
   workflow_dispatch:
   
