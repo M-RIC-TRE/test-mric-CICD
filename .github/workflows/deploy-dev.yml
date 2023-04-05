@@ -101,14 +101,16 @@ jobs:
         run: terraform plan --var-file=config_dev.tfvars.json --out=plan.tfplan -input=false
         continue-on-error: true
       
-      - name: Upload TF Plan
-        uses: actions/upload-artifact@v3
+      - name: Compress TF Plan artifact
+        run: zip -r tfplan.zip ./*
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3.1.2
         with:
-          name: plan.tfplan
-          path: tf_core/plan.tfplan
-          if-no-files-found: error
-          retention-days: 1
-      
+          name: "tfplan"
+          path: "tf_core/tfplan.zip"
+          retention-days: 5
+
 #       # adds a comment to the pull request with the results of the format, init and plan steps  
 #       - name: Update Pull Request
 #         uses: actions/github-script@v6
@@ -164,33 +166,31 @@ jobs:
         shell: bash
         working-directory: tf_core
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3.3.0
+      - name: Download Artifact
+        uses: actions/download-artifact@v3.0.2
+        with:
+          name: tfplan
+          path: tf_core
+
+      - name: Decompress TF Plan artifact
+        run: unzip tfplan.zip
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2.0.3
         with:
           terraform_version: latest
+
       - name: Terraform Init
-        id: init
         run: | 
           terraform init \
-          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" \
+          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}" \
           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
-      
-      - name: Download Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: plan.tfplan
-          path: tf_core/plan.tfplan
-          
       - name: Terraform Apply
-        # if: github.event.review.state == 'approved' # github.ref == 'refs/heads/main' && github.event_name == 'push'
-        # run: terraform apply -auto-approve -input=false -var-file="config_dev.tfvars.json"
         run: terraform apply plan.tfplan
-
+        
+        
 
 ##################### Created on PR upto this point. In dev environment ##################################################################################
 
