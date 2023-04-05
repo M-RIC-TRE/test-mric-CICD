@@ -21,7 +21,7 @@ jobs:
 ###########                               Dev                               ##########################
 ######################################################################################################
 
-  terraform-apply:
+  terraform-apply-dev:
     needs: variables
     runs-on: ubuntu-latest
     environment: dev
@@ -67,7 +67,7 @@ jobs:
   # Create management resource group
   build_management_prod:
     if: github.event.review.state == 'approved'
-    needs: variables
+    needs: [variables, terraform-apply-dev]
     runs-on: ubuntu-latest
     environment: prod
     steps:
@@ -133,7 +133,7 @@ jobs:
         id: init
         run: | 
           terraform init \
-          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" \
+          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prod" \
           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
