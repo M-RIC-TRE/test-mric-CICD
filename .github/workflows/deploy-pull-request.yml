@@ -106,6 +106,8 @@ jobs:
 #           path: "tf_core/tfplan.zip"
 #           retention-days: 5
 
+      - name: Compress TF Plan artifact
+        run: zip -r tfplan.zip ./*
 
 # Save devp file in management azure storage account
 
@@ -121,7 +123,7 @@ jobs:
           inlineScript: |
             # az storage account upload
             cd tf_core
-            az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file plan.tfplan
+            az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file tfplan.zip
           
     
       
