@@ -143,7 +143,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        if: github.event_name == 'pull_request'
+        # if: github.event_name == 'pull_request'
         id: plan
         run: terraform plan --var-file=config_prod.tfvars.json --out=plan.tfplan -input=false
         continue-on-error: true
@@ -181,7 +181,7 @@ jobs:
       - name: Terraform Apply Prod
         run: terraform apply plan.tfplan # -auto-approve -input=false  
     
-    
+
   
 #   # Create management resource group
 #   build_management_prod:
