@@ -179,7 +179,7 @@ jobs:
         run: exit 1 
     
       - name: Terraform Apply Prod
-        run: terraform apply plan.tfplan -auto-approve -input=false  
+        run: terraform apply plan.tfplan # -auto-approve -input=false  
     
     
   
