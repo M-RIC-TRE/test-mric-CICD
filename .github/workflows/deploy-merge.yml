@@ -63,7 +63,11 @@ jobs:
           azcliversion: latest
           inlineScript: |
             # az storage account donwload
-            az storage blob download --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --name plan.tfplan --file plan.tfplan
+            az storage blob download --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --name tfplan.zip --file tfplan.zip
+    
+      - name: Decompress TF Plan artifact
+        run: unzip tfplan.zip
+    
     
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2.0.3
