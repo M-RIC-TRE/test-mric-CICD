@@ -89,14 +89,14 @@ jobs:
         uses: azure/CLI@v1
         with:
             inlineScript: |
-              az storage account create --name  "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod" --resource-group  ${{ needs.variables.outputs.az_mgmt_resource_group }} --location  ${{ needs.variables.outputs.location }} --sku Standard_LRS --encryption-services blob
+              az storage account create --name  "${{ needs.variables.outputs.az_mgmt_storage_acc }}prodtest" --resource-group  ${{ needs.variables.outputs.az_mgmt_resource_group }} --location  ${{ needs.variables.outputs.location }} --sku Standard_LRS --encryption-services blob
             
       - name: Create Storage Container
         id: create_storage_container
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod"
+            az storage container create --name ${{ needs.variables.outputs.az_mgmt_container_name }} --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prodtest"
         
         
   # Build plan
@@ -133,7 +133,7 @@ jobs:
         id: init
         run: | 
           terraform init \
-          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prod" \
+          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prodtest" \
           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
