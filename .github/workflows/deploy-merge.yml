@@ -2,10 +2,12 @@ name: 'Deploy-terraform-merge'
 on:
 
 # Approved Pull request will create plan and deploy to a production workspace
-  pull_request_review:
-    branches: 
-       - main  
-    types: [submitted]
+#   pull_request_review:
+#     branches: 
+#        - main  
+#     types: [submitted]
+
+
 #   push:
 #     branches:
 #       - main
