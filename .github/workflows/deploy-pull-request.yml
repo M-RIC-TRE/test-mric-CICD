@@ -96,49 +96,65 @@ jobs:
         run: terraform plan --var-file=config_dev.tfvars.json --out=plan.tfplan -input=false
         continue-on-error: true
 
-      - name: Compress TF Plan artifact
-        run: zip -r tfplan.zip ./*
+#       - name: Compress TF Plan artifact
+#         run: zip -r tfplan.zip ./*
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3.1.2
+#       - name: Upload Artifact
+#         uses: actions/upload-artifact@v3.1.2
+#         with:
+#           name: "tfplan"
+#           path: "tf_core/tfplan.zip"
+#           retention-days: 5
+
+
+# Save devp file in management azure storage account
+
+      - name: Log in with Azure
+        uses: azure/login@v1
         with:
-          name: "tfplan"
-          path: "tf_core/tfplan.zip"
-          retention-days: 5
-      
-      
-      
-      
-      # adds a comment to the pull request with the results of the format, init and plan steps  
-      - name: Update Pull Request
-        uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
-        env:
-          PLAN: "${{ steps.plan.outputs.stdout }}"
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
+          enable-AzPSSession: true
+      - name: Deploy to storage using CLI
+        uses: azure/CLI@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+          azcliversion: latest
+          inlineScript: |
+            # az storage account upload
+            az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" -c ${{ needs.variables.outputs.az_mgmt_container_name }} --file plan.tfplan
+          
+    
+      
+      
+#       # adds a comment to the pull request with the results of the format, init and plan steps  
+#       - name: Update Pull Request
+#         uses: actions/github-script@v6
+#         if: github.event_name == 'pull_request'
+#         env:
+#           PLAN: "${{ steps.plan.outputs.stdout }}"
+#         with:
+#           github-token: ${{ secrets.GITHUB_TOKEN }}
+#           script: |
+#             const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+#             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+#             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+#             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
 
-            <details><summary>Show Plan</summary>
+#             <details><summary>Show Plan</summary>
 
-            \`\`\`terraform\n
-            ${process.env.PLAN}
-            \`\`\`
+#             \`\`\`terraform\n
+#             ${process.env.PLAN}
+#             \`\`\`
 
-            </details>
+#             </details>
 
-            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+#             *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })  
+#             github.rest.issues.createComment({
+#               issue_number: context.issue.number,
+#               owner: context.repo.owner,
+#               repo: context.repo.repo,
+#               body: output
+#             })  
 
       # Returns whether a plan was successfully generated or not. This step highlights whenever a plan fails because the Terraform Plan step continues on error.
       - name: Terraform Plan Status
