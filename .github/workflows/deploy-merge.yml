@@ -1,14 +1,14 @@
 name: 'Deploy-terraform-merge'
 on:
 # Approved Pull request will create plan and deploy to a production workspace
-  pull_request_review:
-    branches: 
-       - main  
-    types: [submitted]
+#   pull_request_review:
+#     branches: 
+#        - main  
+#     types: [submitted]
 
-  pull_request:
-    types:
-      - closed
+#   pull_request:
+#     types:
+#       - closed
 
 #   push:
 #     branches:
@@ -43,15 +43,29 @@ jobs:
         shell: bash
         working-directory: tf_core
     steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v3.0.2
+#       - name: Download Artifact
+#         uses: actions/download-artifact@v3.0.2
+#         with:
+#           name: tfplan
+#           path: tf_core
+#       - name: Decompress TF Plan artifact
+#         run: unzip tfplan.zip
+    
+      - name: Log in with Azure
+        uses: azure/login@v1
         with:
-          name: tfplan
-          path: tf_core
-
-      - name: Decompress TF Plan artifact
-        run: unzip tfplan.zip
-
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
+          enable-AzPSSession: true
+      - name: Download plan from storage account
+        uses: azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            # az storage account donwload
+            cd tf_core
+            az storage blob donwload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --name plan.tfplan
+            ls
+    
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2.0.3
         with:
@@ -64,7 +78,8 @@ jobs:
           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
-      - name: Terraform Apply
+      
+      - name: Terraform Apply using plan
         run: terraform apply plan.tfplan
       
 # ######################################################################################################
