@@ -63,7 +63,7 @@ jobs:
           inlineScript: |
             # az storage account donwload
             ls
-            az storage blob donwload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --name plan.tfplan
+            az storage blob download --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --name plan.tfplan
             ls
     
       - name: Setup Terraform
