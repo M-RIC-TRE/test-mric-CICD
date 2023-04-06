@@ -58,7 +58,7 @@ jobs:
 
       - name: Terraform Init
         run: | 
-          terraform init
+          terraform init -backend-config=backend_prod.hcl
           
       - name: Terraform Apply using plan
         run: terraform apply plan.tfplan
