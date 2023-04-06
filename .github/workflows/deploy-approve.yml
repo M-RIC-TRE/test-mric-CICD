@@ -6,18 +6,10 @@ on:
        - main  
     types: [submitted]
 
-#   pull_request:
-#     types:
-#       - closed
-
-#   push:
-#     branches:
-#       - main
   workflow_dispatch:
   
 jobs:
   # Get variable files (currently on for all environments)  
-  
   variables: 
     if: github.event.review.state == 'approved'
     uses: ./.github/workflows/variables.yml
