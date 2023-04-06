@@ -79,7 +79,7 @@ jobs:
       - name: Terraform Init
         id: init
         run: | 
-          terraform init -backend-config=backend.hcl
+          terraform init -backend-config=backend_dev.hcl
       
       - name: Terraform Validate
         id: validate
