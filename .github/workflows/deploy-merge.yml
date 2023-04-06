@@ -1,4 +1,4 @@
-name: 'Deploy-pull-request-merge'
+name: 'Deploy-merge'
 on:
   pull_request:
     branches: 
@@ -16,8 +16,8 @@ jobs:
 ###########                               Dev                               ##########################
 ######################################################################################################
 
-  build_terraform_development:
-    if: github.event.pull_request.merged == true ###############################TEMP#######################################################################
+  dev_infra_apply:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     needs: variables
     permissions:
@@ -57,12 +57,8 @@ jobs:
 
       - name: Terraform Init
         run: | 
-          terraform init \
-          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" \
-          --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
-          --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
-          --backend-config="key=${{ needs.variables.outputs.tf_key }}" 
-      
+          terraform init
+          
       - name: Terraform Apply using plan
         run: terraform apply plan.tfplan
   
@@ -70,10 +66,10 @@ jobs:
 ###########                               Prod                              ##########################
 ######################################################################################################
 
-  plan-and-build_terraform_production:
-    if: github.event.pull_request.merged == true ###############################TEMP#######################################################################
+  prod_infra_build_plan:
+    if: github.event.pull_request.merged == true 
     runs-on: ubuntu-latest
-    needs: [variables,build_terraform_development]
+    needs: [variables,dev_infra_apply]
     permissions:
       pull-requests: write
     environment: prod
@@ -94,21 +90,21 @@ jobs:
           enable-AzPSSession: true
 
 # Create management resource group
-      - name: Create Resource Group
+      - name: Create Management Resource Group
         id: create_resource_group
         uses: azure/CLI@v1
         with:
           inlineScript: |
             az group create --name ${{ needs.variables.outputs.az_mgmt_resource_group }} --location ${{ needs.variables.outputs.location }}
   
-      - name: Create Storage Account
+      - name: Create Management Storage Account
         id: create_storage_account
         uses: azure/CLI@v1
         with:
             inlineScript: |
               az storage account create --name  "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" --resource-group  ${{ needs.variables.outputs.az_mgmt_resource_group }} --location  ${{ needs.variables.outputs.location }} --sku Standard_LRS --encryption-services blob
             
-      - name: Create Storage Container
+      - name: Create Management Storage Container
         id: create_storage_container
         uses: azure/CLI@v1
         with:
@@ -125,16 +121,12 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        run: terraform fmt --check
+        run: terraform fmt   -diff -write=false # --check
 
       - name: Terraform Init
         id: init
         run: | 
-          terraform init \
-          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" \
-          --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
-          --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
-          --backend-config="key=${{ needs.variables.outputs.tf_key }}"
+          terraform init 
       
       - name: Terraform Validate
         id: validate
@@ -144,50 +136,6 @@ jobs:
         id: plan
         run: terraform plan --var-file=config_prod.tfvars.json --out=plan.tfplan -input=false
         continue-on-error: true
-
-
-# ###### Non need to download and upload as it's the same job ############################################################
-
-# # Zip and save prod file in management azure storage account
-#       - name: Compress TF Plan artifact
-#         run: zip -r tfplan.zip ./*
-      
-#       - name: Upload to storage using CLI
-#         uses: azure/CLI@v1
-#         with:
-#           azcliversion: latest
-#           inlineScript: |
-#             # az storage account upload
-#             ls
-#             cd tf_core
-#             ls
-#             az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file tfplan.zip
-#             cd..
-#             ls
-  
-#       - name: Download plan from storage account
-#         uses: azure/CLI@v1
-#         with:
-#           azcliversion: latest
-#           inlineScript: |
-#             # az storage account donwload
-#             az storage blob download --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --name tfplan.zip --file tfplan.zip
-    
-#       - name: Decompress TF Plan artifact
-#         run: unzip tfplan.zip
-    ################################################################################################################
-#       - name: Setup Terraform
-#         uses: hashicorp/setup-terraform@v2.0.3
-#         with:
-#           terraform_version: latest
-
-#       - name: Terraform Init
-#         run: | 
-#           terraform init \
-#           --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" \
-#           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
-#           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
-#           --backend-config="key=${{ needs.variables.outputs.tf_key }}" 
       
       - name: Terraform Apply using plan
         run: terraform apply plan.tfplan
