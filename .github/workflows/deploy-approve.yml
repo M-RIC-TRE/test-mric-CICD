@@ -1,6 +1,6 @@
 name: 'Pull-request-approved'
 on:
-Approved Pull request will create plan and deploy to a production workspace
+# Approved Pull request will create plan and deploy to a production workspace
   pull_request_review:
     branches: 
        - main  
@@ -24,11 +24,6 @@ jobs:
 ######################################################################################################
 ###########                               Prod                               #########################
 ######################################################################################################
-
-jobs:    
-  # Get variable files (currently on for all environments)  
-  variables: 
-    uses: ./.github/workflows/variables.yml
   
   # Create management resource group
   build_management_dev:
