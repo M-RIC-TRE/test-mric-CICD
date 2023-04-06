@@ -3,9 +3,9 @@
 terraform {
   backend "azurerm" {
     resource_group_name  = "rg-terraform-state"
-    storage_account_name = "stamrictfstatesprod001"
+    storage_account_name = "stamrictfstatesdev"
     container_name       = "tfstate"
-    key                  = "prod.tfstate"
+    key                  = "dev.tfstate"
   }
   required_providers {
     azurerm = {
