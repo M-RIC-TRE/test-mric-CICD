@@ -1,4 +1,4 @@
-name: 'Deploy-Pull-request-approved'
+name: 'Deploy-pull-request-approved'
 on:
 # Approved Pull request will create plan and deploy to a production workspace
   pull_request_review:
