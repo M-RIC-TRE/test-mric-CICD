@@ -44,7 +44,7 @@ jobs:
         id: init
         run: | 
           terraform init \
-          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" \
+          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" \
           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
@@ -58,25 +58,6 @@ jobs:
         run: terraform plan --var-file=config_dev.tfvars.json --out=plan.tfplan -input=false
         continue-on-error: true
 
-# Save devp file in management azure storage account
-
-      - name: Compress TF Plan artifact
-        run: zip -r tfplan.zip ./*
-
-      - name: Log in with Azure
-        uses: azure/login@v1
-        with:
-          creds: "${{ secrets.AZURE_CREDENTIALS }}"
-          enable-AzPSSession: true
-      - name: Deploy to storage using CLI
-        uses: azure/CLI@v1
-        with:
-          azcliversion: latest
-          inlineScript: |
-            # az storage account upload
-            cd tf_core
-            az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file tfplan.zip --overwrite true
-      
 
       # Returns whether a plan was successfully generated or not. This step highlights whenever a plan fails because the Terraform Plan step continues on error.
       - name: Terraform Plan Status
