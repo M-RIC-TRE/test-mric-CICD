@@ -62,7 +62,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: tf_core_dev
+        working-directory: tf_core
     steps:
       - name: Checkout
         uses: actions/checkout@v3.3.0
@@ -105,7 +105,7 @@ jobs:
           azcliversion: latest
           inlineScript: |
             # az storage account upload
-            cd tf_core_dev
+            cd tf_core
             az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file tfplan.zip --overwrite true
       
       # adds a comment to the pull request with the results of the format, init and plan steps  
