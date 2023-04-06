@@ -145,34 +145,37 @@ jobs:
         run: terraform plan --var-file=config_prod.tfvars.json --out=plan.tfplan -input=false
         continue-on-error: true
 
-# Zip and save prod file in management azure storage account
-      - name: Compress TF Plan artifact
-        run: zip -r tfplan.zip ./*
+
+# ###### Non need to download and upload as it's the same job ############################################################
+
+# # Zip and save prod file in management azure storage account
+#       - name: Compress TF Plan artifact
+#         run: zip -r tfplan.zip ./*
       
-      - name: Upload to storage using CLI
-        uses: azure/CLI@v1
-        with:
-          azcliversion: latest
-          inlineScript: |
-            # az storage account upload
-            ls
-            cd tf_core
-            ls
-            az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file tfplan.zip
-            cd..
-            ls
-      
-      - name: Download plan from storage account
-        uses: azure/CLI@v1
-        with:
-          azcliversion: latest
-          inlineScript: |
-            # az storage account donwload
-            az storage blob download --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --name tfplan.zip --file tfplan.zip
+#       - name: Upload to storage using CLI
+#         uses: azure/CLI@v1
+#         with:
+#           azcliversion: latest
+#           inlineScript: |
+#             # az storage account upload
+#             ls
+#             cd tf_core
+#             ls
+#             az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file tfplan.zip
+#             cd..
+#             ls
+  
+#       - name: Download plan from storage account
+#         uses: azure/CLI@v1
+#         with:
+#           azcliversion: latest
+#           inlineScript: |
+#             # az storage account donwload
+#             az storage blob download --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --name tfplan.zip --file tfplan.zip
     
-      - name: Decompress TF Plan artifact
-        run: unzip tfplan.zip
-    
+#       - name: Decompress TF Plan artifact
+#         run: unzip tfplan.zip
+    ################################################################################################################
 #       - name: Setup Terraform
 #         uses: hashicorp/setup-terraform@v2.0.3
 #         with:
