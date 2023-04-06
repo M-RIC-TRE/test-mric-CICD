@@ -48,12 +48,18 @@ jobs:
 
       - name: Terraform Init
         id: init
+#         run: | 
+#           terraform init \
+#           --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" \
+#           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
+#           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
+#           --backend-config="key=${{ needs.variables.outputs.tf_key }}"
         run: | 
           terraform init \
-          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" \
-          --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
-          --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
-          --backend-config="key=${{ needs.variables.outputs.tf_key }}"
+          --backend-config="storage_account_name=stamrictfstatesprod001" \
+          --backend-config="container_name=tfstate" \
+          --backend-config="resource_group_name=rg-terraform-state" \
+          --backend-config="key=terraform.state"
       
       - name: Terraform Validate
         id: validate
