@@ -81,7 +81,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: tf_core
+        working-directory: tf_core_prod
     steps:    
       - name: Log in with Azure
         uses: azure/login@v1
