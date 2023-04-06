@@ -1,4 +1,4 @@
-name: 'Deploy-pull-request'
+name: 'Test-init'
 on:
   pull_request:
     branches:
