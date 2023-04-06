@@ -112,7 +112,7 @@ jobs:
       - name: Terraform Init
         run: | 
           terraform init \
-          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" \
+          --backend-config="storage_account_name=${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" \
           --backend-config="container_name=${{ needs.variables.outputs.az_mgmt_container_name }}" \
           --backend-config="resource_group_name=${{ needs.variables.outputs.az_mgmt_resource_group }}" \
           --backend-config="key=${{ needs.variables.outputs.tf_key }}" 
