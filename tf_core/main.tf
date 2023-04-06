@@ -1,5 +1,19 @@
 # We strongly recommend using the required_providers block to set the
 # Azure Provider source and version being used
+
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "rg-terraform-state"
+    storage_account_name = "stamrictfstatesprod001"
+    container_name       = "tfstate"
+    key                  = "prod.tfstate"
+  }
+}
+ 
+provider "azurerm" {
+  features {}
+}
+
 terraform {
   required_providers {
     azurerm = {
@@ -7,10 +21,6 @@ terraform {
       version = "=3.0.0"
     }
   }
-}
-
-provider "azurerm" {
-  features {}
 }
 
 #Create Resource Group
