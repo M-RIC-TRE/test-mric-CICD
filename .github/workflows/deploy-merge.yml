@@ -17,7 +17,7 @@ jobs:
 ######################################################################################################
 
   dev_infra_apply:
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     needs: variables
     permissions:
@@ -46,6 +46,7 @@ jobs:
           inlineScript: |
             # az storage account donwload
             az storage blob download --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}dev" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --name tfplan.zip --file tfplan.zip
+            ls
     
       - name: Decompress TF Plan artifact
         run: unzip tfplan.zip
