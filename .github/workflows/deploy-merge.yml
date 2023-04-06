@@ -155,7 +155,9 @@ jobs:
           azcliversion: latest
           inlineScript: |
             # az storage account upload
+            ls
             cd tf_core
+            ls
             az storage blob upload --account-name "${{ needs.variables.outputs.az_mgmt_storage_acc }}prod001" --container-name ${{ needs.variables.outputs.az_mgmt_container_name }} --file tfplan.zip
       
       - name: Download plan from storage account
