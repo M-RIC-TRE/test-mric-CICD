@@ -18,3 +18,15 @@ resource "azurerm_resource_group" "rgfirst" {
   name     = var.resource_group_name
   location = var.location
 }
+
+resource "azurerm_storage_account" "example" {
+  name                     = "stasp0604"
+  resource_group_name      = azurerm_resource_group.rgfirst.name
+  location                 = azurerm_resource_group.rgfirst.location
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+
+  tags = {
+    environment = "staging"
+  }
+}
